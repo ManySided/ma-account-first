@@ -1,0 +1,13 @@
+.gradle/
+.idea/
+build/
+*.iml
+target
+
+ma-arving-old/
+
+# eclipse-specific
+.classpath
+.project
+.settings
+.metadata

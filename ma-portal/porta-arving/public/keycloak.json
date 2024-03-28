@@ -1,0 +1,8 @@
+{
+  "realm": "ma_account",
+  "auth-server-url": "http://localhost:8180/",
+  "ssl-required": "external",
+  "resource": "r_portal",
+  "public-client": true,
+  "confidential-port": 0
+}

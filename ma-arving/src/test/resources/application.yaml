@@ -1,0 +1,2 @@
+spring:
+  datasource: org.testcontainers.jdbc.ContainerDatabaseDriver
