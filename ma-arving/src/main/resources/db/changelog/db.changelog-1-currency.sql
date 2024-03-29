@@ -18,7 +18,7 @@ comment on column spatium.currency.znachok is 'Символ валюты';
 
 --changeset parshakov-as:20240317-02 failOnError:true
 create sequence if not exists spatium.currency_id_seq
-    start with 1
+    start with 100
     increment by 1
     no minvalue
     no maxvalue

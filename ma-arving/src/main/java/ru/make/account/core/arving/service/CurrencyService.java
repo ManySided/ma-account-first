@@ -8,6 +8,9 @@ import ru.make.account.core.arving.repository.CurrencyRepository;
 import ru.make.account.core.arving.web.dto.currency.CurrencyDto;
 import ru.make.account.core.arving.web.mapper.CurrencyMapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -20,5 +23,12 @@ public class CurrencyService {
         var currency = currencyRepository.findById(currencyId)
                 .orElseThrow(() -> new ProcessException(String.format("Валюта [%s] не найдена", currencyId)));
         return currencyMapper.toDto(currency);
+    }
+
+    public List<CurrencyDto> getAll() {
+        log.info("получение данных справочника: валюта");
+        return currencyRepository.findAll().stream()
+                .map(currencyMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

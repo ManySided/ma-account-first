@@ -9,8 +9,8 @@ create table spatium.ofu
         constraint ofu_pkey primary key,
     nazvanie       varchar(4096)               not null,
     kommentarii    varchar(4096),
-    init_state     numeric(5, 2)               not null,
-    current_state  numeric(5, 2)               not null,
+    init_state     numeric(9, 2)               not null,
+    current_state  numeric(9, 2)               not null,
     currency_id    bigint                      not null
         constraint account_currency_id_fk
             references spatium.currency,
@@ -19,16 +19,15 @@ create table spatium.ofu
     is_aktivno     boolean                     not null
 );
 
-comment on column spatium.ofu.name is 'Название счёта';
+comment on column spatium.ofu.nazvanie is 'Название счёта';
 comment on column spatium.ofu.kommentarii is 'Комментарий к счёту';
 comment on column spatium.ofu.init_state is 'Начальная сумма';
 comment on column spatium.ofu.current_state is 'Текущая сумма';
 comment on column spatium.ofu.currency_id is 'ID валюты счёта';
 comment on column spatium.ofu.is_aktivno is 'Признак активности счёта';
 
---changeset parshakov-as:20240317-02 failOnError:true
 create sequence if not exists spatium.account_id_seq
-    start with 1
+    start with 100
     increment by 1
     no minvalue
     no maxvalue
