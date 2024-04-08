@@ -9,6 +9,7 @@ import ru.make.account.core.arving.web.dto.account.AccountDto;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/service/account")
 @RequiredArgsConstructor
 public class AccountController {

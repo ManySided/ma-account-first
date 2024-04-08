@@ -9,14 +9,7 @@
     </q-header>
 
     <q-page-container>
-      <div class="q-pa-md row items-start q-gutter-md">
-        <q-card class="my-card">
-          <q-card-section>
-            Добро пожаловать
-            <q-btn flat @click="$router.push('workspace/account')" label="Счета"/>
-          </q-card-section>
-        </q-card>
-      </div>
+      <router-view></router-view>
     </q-page-container>
   </q-layout>
 </template>
