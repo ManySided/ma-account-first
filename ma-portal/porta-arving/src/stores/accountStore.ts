@@ -19,7 +19,6 @@ export const useAccountStore = defineStore('account', {
     loadAccounts() {
       api.get('/api/service/account/getAccounts').then((response) => {
         this.accounts = response.data
-        console.log(response.data)
       })
         .catch((error) => {
           Notify.create({

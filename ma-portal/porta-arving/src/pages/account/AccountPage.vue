@@ -47,7 +47,6 @@
                           option-value="id"
                           option-label="name"
                           emit-value
-                          map-options
                           label="Валюта"/>
                 <custom-field-date-time
                   v-model:dateVariable="thisAccount.created"
@@ -96,9 +95,6 @@ export default defineComponent({
       comment: '',
       startSum: 0,
       currentSum: 0,
-      currency: {
-        id: 1
-      },
       created: now,
       actual: true
     } as Account);
@@ -117,10 +113,7 @@ export default defineComponent({
         comment: '',
         startSum: 0,
         currentSum: 0,
-        currency: {
-          id: 1
-        },
-        created: '',
+        created: date.formatDate(Date.now(), 'YYYY-MM-DDTHH:mm:ss'),
         actual: true
       } as Account;
     }
@@ -130,8 +123,7 @@ export default defineComponent({
 
     const model = ref(null);
 
-    const fieldTxt = ref('');
-    const date = ref('');
+
     return {
       // store
       storeDict,
@@ -145,8 +137,6 @@ export default defineComponent({
       model,
 
       isShowActivity,
-      fieldTxt,
-      date
     }
   }
 });

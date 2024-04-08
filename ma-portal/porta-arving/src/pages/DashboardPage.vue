@@ -1,6 +1,9 @@
 <template>
   <q-page>
-    <custom-field-date-time v-model:dateVariable="modelDate" field-name="Дата создания"/>
+    <custom-field-date-time v-model:dateVariable="modelDate" field-name="Дата создания" can-change/>
+    <div>
+      {{modelDate}}
+    </div>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="my-card">
         <q-card-section>
