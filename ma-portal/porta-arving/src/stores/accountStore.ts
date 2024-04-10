@@ -32,6 +32,9 @@ export const useAccountStore = defineStore('account', {
     },
     saveAccount(item: Account) {
       console.log(item)
+    },
+    removeAccount(item: Account) {
+      console.log(item)
     }
   }
 });

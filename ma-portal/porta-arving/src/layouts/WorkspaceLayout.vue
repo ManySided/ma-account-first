@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          <q-btn color="purple" label="Arving">
+          <q-btn color="purple" label="Меню">
             <q-menu>
               <div class="row no-wrap q-pa-md">
                 <div class="column">
