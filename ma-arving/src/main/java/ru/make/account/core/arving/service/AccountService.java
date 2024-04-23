@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.make.account.core.arving.exception.ProcessException;
-import ru.make.account.core.arving.model.Account;
 import ru.make.account.core.arving.repository.AccountRepository;
 import ru.make.account.core.arving.security.SecurityHandler;
 import ru.make.account.core.arving.web.dto.account.AccountDto;
@@ -44,6 +43,7 @@ public class AccountService {
         log.info("обновление счёта [{}]", request.getId());
         checkAccessToAccount(request.getId());
         log.info("> проверка безопасности пройдена");
+        // TODO можно ли изменять текущую сумму, если уже есть операции
         var updateAccount = accountMapper.toEntity(request);
         var response = accountRepository.save(updateAccount);
         log.info("обновлён счёт [{}]", response.getId());
@@ -55,8 +55,7 @@ public class AccountService {
         log.info("удаление счёта [{}]", request);
         checkAccessToAccount(request);
         log.info("> проверка безопасности пройдена");
-        var deleteAccount = new Account();
-        deleteAccount.setId(request);
+        var deleteAccount = accountRepository.getReferenceById(request);
         deleteAccount.setActual(Boolean.FALSE);
         var response = accountRepository.save(deleteAccount);
         log.info("счёт [{}] деактивирован", response.getId());
@@ -65,7 +64,7 @@ public class AccountService {
 
     public List<AccountDto> getAccounts() {
         log.info("получение активных счетов");
-        return accountRepository.findAllByActualTrueAndAccountCreator(securityHandler.getUserId()).stream()
+        return accountRepository.findAllByAccountCreatorOrderByCreatedDesc(securityHandler.getUserId()).stream()
                 .map(item -> {
                     var dto = accountMapper.toDto(item);
                     dto.setCurrency(currencyService.getCurrency(item.getCurrencyId()));

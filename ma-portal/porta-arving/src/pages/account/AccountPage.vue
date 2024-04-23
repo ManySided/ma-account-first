@@ -10,24 +10,27 @@
     <div class="q-pa-md example-row-equal-width">
       <div class="row">
         <div class="col">
-          <q-toggle v-model="isShowActivity" label="Показывать только активные счета"/>
+          <q-toggle v-model="isShowActivity" label="Показать активные счета"/>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
           <q-list bordered separator class="rounded-borders">
-            <q-item clickable v-ripple
-                    v-for="(item, index) in storeAccount.getAccounts" :key="index"
-                    @click="changeAccount(item)"
-            >
-              <q-item-section>
-                <q-item-label><b>{{ item.name }}</b></q-item-label>
-                <q-item-label><i>{{ item.comment }}</i></q-item-label>
-              </q-item-section>
-              <q-item-section side top>
-                <q-item-label caption>{{ item.currentSum }}</q-item-label>
-              </q-item-section>
-            </q-item>
+            <div v-for="(item, index) in storeAccount.getAccounts" :key="index">
+              <q-item clickable v-ripple
+                      v-if="isShowActivity === item.actual"
+                      @click="changeAccount(item)"
+                      :active="item.actual"
+              >
+                <q-item-section>
+                  <q-item-label><b>{{ item.name }}</b></q-item-label>
+                  <q-item-label><i>{{ item.comment }}</i></q-item-label>
+                </q-item-section>
+                <q-item-section side top>
+                  <q-item-label caption>{{ item.currentSum }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </div>
           </q-list>
           <div style="padding-top: 5px">
             <q-btn color="primary" class="col-12" style="width: 100%" @click="newAccount">Создать</q-btn>
@@ -192,6 +195,7 @@ export default defineComponent({
     }
     const removeAccount = () => {
       storeAccount.removeAccount(thisAccount.value)
+      storeAccount.loadAccounts()
     }
 
     return {

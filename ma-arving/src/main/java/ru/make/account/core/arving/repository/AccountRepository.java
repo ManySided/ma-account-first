@@ -9,5 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    List<Account> findAllByActualTrueAndAccountCreator(UUID accountCreator);
+    List<Account> findAllByActualTrueAndAccountCreatorOrderByCreatedDesc(UUID accountCreator);
+
+    List<Account> findAllByAccountCreatorOrderByCreatedDesc(UUID accountCreator);
 }

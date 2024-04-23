@@ -24,17 +24,72 @@ export const useAccountStore = defineStore('account', {
           Notify.create({
             color: 'negative',
             position: 'top',
-            message: error.errors,
+            message: error.message,
+            icon: 'report_problem'
+          })
+        })
+    },
+    saveAccount(item: Account) {
+      if (item.id) {
+        api.post('/api/service/account', {item})
+          .then(() => {
+            Notify.create({
+              color: 'positive',
+              position: 'top',
+              message: 'Счёт создан',
+              icon: 'done'
+            })
+          })
+          .catch((error) => {
+            Notify.create({
+              color: 'negative',
+              position: 'top',
+              message: error.message || error.errors,
+              icon: 'report_problem'
+            })
+            console.log(error)
+          })
+      } else {
+        api.put('/api/service/account', {item})
+          .then(() => {
+            Notify.create({
+              color: 'positive',
+              position: 'top',
+              message: 'Счёт обновлён',
+              icon: 'done'
+            })
+          })
+          .catch((error) => {
+            Notify.create({
+              color: 'negative',
+              position: 'top',
+              message: error.message || error.errors,
+              icon: 'report_problem'
+            })
+            console.log(error)
+          })
+      }
+    },
+    removeAccount(item: Account) {
+      const params = {accountId: item.id};
+      api.delete('/api/service/account', {params})
+        .then(() => {
+          Notify.create({
+            color: 'positive',
+            position: 'top',
+            message: 'Счёт удалён',
+            icon: 'done'
+          })
+        })
+        .catch((error) => {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.message,
             icon: 'report_problem'
           })
           console.log(error)
         })
-    },
-    saveAccount(item: Account) {
-      console.log(item)
-    },
-    removeAccount(item: Account) {
-      console.log(item)
     }
   }
 });

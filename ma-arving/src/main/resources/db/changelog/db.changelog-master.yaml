@@ -5,3 +5,30 @@ databaseChangeLog:
   - include:
       file: db.changelog-2-account.sql
       relativeToChangelogFile: true
+  - include:
+      file: db.changelog-3-category.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-4-ticket.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-5-unit.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-6-nomenclature.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-7-product.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-8-purchase.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-9-operation.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-10-debt.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-11-transfer.sql
+      relativeToChangelogFile: true

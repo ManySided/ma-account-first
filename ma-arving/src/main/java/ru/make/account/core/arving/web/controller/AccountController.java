@@ -1,5 +1,6 @@
 package ru.make.account.core.arving.web.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody AccountDto request) {
+    public ResponseEntity<?> createAccount(@RequestBody @Valid AccountDto request) {
         return ResponseEntity.ok(accountService.createAccount(request));
     }
 
