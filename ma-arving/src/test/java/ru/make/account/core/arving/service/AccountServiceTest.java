@@ -1,32 +1,42 @@
 package ru.make.account.core.arving.service;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import ru.make.account.core.arving.config.TestContainerConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.make.account.core.arving.web.dto.account.AccountDto;
 import ru.make.account.core.arving.web.dto.currency.CurrencyDto;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.assertEquals;
+
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestContainerConfiguration.class)
-public class AccountServiceTest {
+@Testcontainers
+public class AccountServiceTest extends AbstractTestBase {
     @Autowired
     private AccountService accountService;
 
     @Test
     public void testCreateAccountSuccess() throws Exception {
         var response = accountService.createAccount(AccountDto.builder()
-                .id(488L)
+                .name("test account")
                 .comment("Общий счёт")
                 .startSum(BigDecimal.valueOf(84445.59))
                 .currency(CurrencyDto.builder()
-                        .id(9L)
+                        .id(getCurrencyRubId())
                         .build())
                 .build());
 
-        var accounts = accountService.getAccounts();
+        var account = accountService.getAccount(response);
+        assertEquals("test account", account.getName());
+        assertEquals("Общий счёт", account.getComment());
+        assertEquals(getCurrencyRubId(), account.getCurrency().getId());
+        assertEquals(BigDecimal.valueOf(84445.59), account.getCurrentSum());
+        assertEquals(BigDecimal.valueOf(84445.59), account.getStartSum());
+        assertEquals(Boolean.TRUE, account.getActual());
     }
 }

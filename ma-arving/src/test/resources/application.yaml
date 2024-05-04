@@ -1,2 +1,7 @@
 spring:
-  datasource: org.testcontainers.jdbc.ContainerDatabaseDriver
+  datasource:
+    username: core
+    password: test
+    url: jdbc:tc:postgresql:15.1:///test?TC_INITSCRIPT=db/init.sql
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+

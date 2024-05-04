@@ -21,7 +21,7 @@ public class Category {
     @Column(name = "parent")
     private Long parent;
     @Column(name = "ofu_id")
-    private Long account;
+    private Long accountId;
     @Column(name = "is_kategoria_slugebnaa")
     private Boolean stuffFlag;
 }
