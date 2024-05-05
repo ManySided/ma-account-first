@@ -1,4 +1,4 @@
-package ru.make.account.core.arving.web.dto.operation;
+package ru.make.account.core.arving.web.dto.ticket;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.make.account.core.arving.model.TicketDirectionEnum;
+import ru.make.account.core.arving.web.dto.operation.OperationDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,4 +31,6 @@ public class TicketDto {
     @NotNull(message = "Поле 'Операции чека' должно быть заполнен")
     @NotEmpty(message = "Поле 'Операции чека' должно быть заполнен")
     private List<OperationDto> operations;
+
+    private BigDecimal totalSum;
 }

@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.make.account.core.arving.model.TicketDirectionEnum;
 import ru.make.account.core.arving.web.dto.operation.CategoryDto;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
-import ru.make.account.core.arving.web.dto.operation.TicketDto;
+import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -19,6 +19,8 @@ public class OperationService {
 
     private final OperationRepository operationRepository;
 
+    private final CategoryService categoryService;
+
     public Long saveOperation(OperationDto request) {
         log.info("создание операции");
         var operationEntity = operationMapper.toEntity(request);
@@ -39,6 +41,8 @@ public class OperationService {
     }
 
     private OperationDto toDto(Operation operation) {
-        return operationMapper.toDto(operation);
+        var result = operationMapper.toDto(operation);
+        result.setCategory(categoryService.getCategoryById(operation.getCategoryId()));
+        return result;
     }
 }
