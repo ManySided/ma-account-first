@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,7 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketsOfDayDto {
-    private List<TicketDto> tickets;
+    @Builder.Default
+    private List<TicketDto> tickets = new ArrayList<>();
     private BigDecimal sumOfDay;
     private LocalDate dayDate;
 }

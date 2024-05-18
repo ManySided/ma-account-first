@@ -20,7 +20,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.saveTicket(request));
     }
 
-    @GetMapping
+    @PostMapping("/filter")
     public ResponseEntity<?> getTicketsByFilter(@RequestBody TicketFilterDto request) {
         return ResponseEntity.ok(ticketService.getTicketsGroupByDay(request));
     }

@@ -5,27 +5,36 @@
         <q-toolbar-title>
           <q-btn color="purple" label="Меню">
             <q-menu>
-              <div class="row no-wrap q-pa-md">
-                <div class="column">
-                  <q-btn flat @click="$router.push('account/')" label="Счета"/>
-                  <q-btn flat label="Операции"/>
-                  <q-btn flat label="Долги"/>
-                  <q-btn flat label="Отчёты"/>
-                </div>
+              <q-list dense style="min-width: 100px">
+                <q-item clickable v-close-popup>
+                  <q-item-section @click="$router.push('account/')">Счета</q-item-section>
+                </q-item>
+                <q-item clickable>
+                  <q-item-section>Операции</q-item-section>
+                  <q-item-section side>
+                    <q-icon name="keyboard_arrow_right"/>
+                  </q-item-section>
 
-                <q-separator vertical inset class="q-mx-lg"/>
+                  <q-menu anchor="top end" self="top start">
+                    <q-list>
+                      <q-item
+                        v-for="(item, index) in storeAccount.getAccounts" :key="index"
+                        dense
+                        clickable
+                      >
+                        <q-item-section
+                          @click="$router.push({name:'tickets', params: {accountId: getTicketsLink(item)}})">
+                          {{ item.name }}
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
 
-                <div class="column items-center">
-                  <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
-                  <q-btn
-                    color="primary"
-                    label="выход"
-                    push
-                    size="sm"
-                    v-close-popup
-                  />
-                </div>
-              </div>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>Долги</q-item-section>
+                </q-item>
+              </q-list>
             </q-menu>
           </q-btn>
         </q-toolbar-title>
@@ -39,9 +48,18 @@
 </template>
 
 <script setup lang="ts">
+import {useAccountStore} from 'stores/accountStore';
+import Account from 'src/model/dto/AccountDto';
+
+const storeAccount = useAccountStore();
+storeAccount.loadAccounts();
+
+const getTicketsLink = (item: Account) => {
+  return item.id;
+};
 
 defineOptions({
-  name: 'MainLayout'
+  name: 'MainLayout',
 });
 
 </script>

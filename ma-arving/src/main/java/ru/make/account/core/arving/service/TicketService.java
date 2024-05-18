@@ -122,26 +122,34 @@ public class TicketService {
                         .sumOfDay(BigDecimal.ZERO)
                         .build());
             }
-
             var current = result.getDays().stream()
                     .reduce((first, second) -> second)
                     .get();
+
             var ticketTotalSum = ticket.getOperations().stream()
                     .map(OperationDto::getSum)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             ticket.setTotalSum(ticketTotalSum);
 
+            var ticketDirection = ticket.getTicketDirection();
             if (current.getDayDate().equals(ticket.getDate())) {
                 // дата одинаковая
                 current.getTickets().add(ticket);
-                current.setSumOfDay(current.getSumOfDay().add(ticketTotalSum));
+                switch (ticketDirection) {
+                    case EXPENDITURE -> current.setSumOfDay(current.getSumOfDay().subtract(ticketTotalSum));
+                    case INCOME -> current.setSumOfDay(current.getSumOfDay().add(ticketTotalSum));
+                }
             } else {
                 // дата отличается
-                result.getDays().add(TicketsOfDayDto.builder()
+                var newDay = TicketsOfDayDto.builder()
                         .dayDate(ticket.getDate())
-                        .sumOfDay(ticketTotalSum)
                         .tickets(Collections.singletonList(ticket))
-                        .build());
+                        .build();
+                switch (ticketDirection) {
+                    case EXPENDITURE -> newDay.setSumOfDay(BigDecimal.ZERO.subtract(ticketTotalSum));
+                    case INCOME -> newDay.setSumOfDay(BigDecimal.ZERO.add(ticketTotalSum));
+                }
+                result.getDays().add(newDay);
             }
         }
         return result;

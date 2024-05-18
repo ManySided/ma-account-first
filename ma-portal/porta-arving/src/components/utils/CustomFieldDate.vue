@@ -7,7 +7,7 @@
     :class="$q.dark.isActive ? 'bg-grey-9 text-white' : 'bg-grey-2'"
   >
     <q-item-section>
-      <q-item-label>
+      <q-item-label style="color: #a4a4a4; font-size: 12px">
         {{fieldName}}
       </q-item-label>
       {{convertServer2View()}}
@@ -15,22 +15,11 @@
     <q-item-section side>
       <q-icon name="event" class="cursor-pointer" v-show="canChange">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date v-model="dateVariable" mask="YYYY-MM-DDTHH:mm:ss">
+          <q-date v-model="dateVariable" mask="YYYY-MM-DD">
             <div class="row items-center justify-end">
               <q-btn v-close-popup label="Close" color="primary" flat/>
             </div>
           </q-date>
-        </q-popup-proxy>
-      </q-icon>
-    </q-item-section>
-    <q-item-section side>
-      <q-icon name="access_time" class="cursor-pointer" v-show="canChange">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-time v-model="dateVariable" mask="YYYY-MM-DDTHH:mm:ss" format24h>
-            <div class="row items-center justify-end">
-              <q-btn v-close-popup label="Close" color="primary" flat/>
-            </div>
-          </q-time>
         </q-popup-proxy>
       </q-icon>
     </q-item-section>
@@ -46,12 +35,12 @@ interface DateProps {
   canChange: boolean;
 }
 defineOptions({
-  name: 'CustomFieldDateTime'
+  name: 'CustomFieldDate'
 });
 withDefaults(defineProps<DateProps>(), {fieldName: 'Дата', canChange: false});
 
-const FORMAT_SERVER = 'YYYY-MM-DDTHH:mm:ss'
-const FORMAT_VIEW = 'DD.MM.YYYY HH:mm:ss'
+const FORMAT_SERVER = 'YYYY-MM-DD'
+const FORMAT_VIEW = 'DD.MM.YYYY'
 
 
 const dateVariable = defineModel('dateVariable')

@@ -9,8 +9,8 @@ create table spatium.operations
         constraint operation_pkey primary key,
     summa             numeric(9, 2) not null,
     nazvanie_opercii  varchar(4096) not null,
-    komment_k_opercii varchar(4096) not null,
-    product_id        bigint        not null
+    komment_k_opercii varchar(4096),
+    product_id        bigint
         constraint operation_category_id_fk
             references spatium.product_category,
     purchase_id       bigint

@@ -6,16 +6,35 @@ import Account from 'src/model/dto/AccountDto';
 export const useAccountStore = defineStore('account', {
   state: () => ({
     accounts: [] as Account[],
-    showOnlyAction: true
+    currentAccount: {} as Account
   }),
 
   getters: {
     getAccounts(state) {
       return state.accounts;
+    },
+    getCurrentAccountName(state) {
+      return state.currentAccount.name;
+    },
+    getCurrentAccountSum(state) {
+      return state.currentAccount.currentSum;
     }
   },
 
   actions: {
+    loadAccountById(id: number) {
+      api.get('/api/service/account/getAccountById', {params: {request: id}}).then((response) => {
+        this.currentAccount = response.data
+      })
+        .catch((error) => {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.message,
+            icon: 'report_problem'
+          })
+        })
+    },
     loadAccounts() {
       api.get('/api/service/account/getAccounts').then((response) => {
         this.accounts = response.data

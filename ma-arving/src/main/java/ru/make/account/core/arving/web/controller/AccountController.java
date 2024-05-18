@@ -21,6 +21,11 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccounts());
     }
 
+    @GetMapping("/getAccountById")
+    public ResponseEntity<AccountDto> getAccountById(Long request) {
+        return ResponseEntity.ok(accountService.getAccount(request));
+    }
+
     @PostMapping
     public ResponseEntity<?> createAccount(@RequestBody @Valid AccountDto request) {
         return ResponseEntity.ok(accountService.createAccount(request));

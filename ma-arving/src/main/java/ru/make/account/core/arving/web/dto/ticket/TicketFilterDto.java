@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.make.account.core.arving.model.Category;
 import ru.make.account.core.arving.model.TicketDirectionEnum;
 
 import java.time.LocalDate;
@@ -17,5 +18,7 @@ public class TicketFilterDto {
     private LocalDate from;
     private LocalDate to;
     private Long accountId;
+    private String name;
+    private List<Category> categories;
     List<TicketDirectionEnum> directions;
 }

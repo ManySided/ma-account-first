@@ -15,7 +15,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/WorkspaceLayout.vue'),
     children: [
       {
+        name: 'account',
         path: 'account', component: () => import('pages/account/AccountPage.vue'),
+      },
+      {
+        path: 'tickets/:accountId',
+        name: 'tickets',
+        component: () => import('pages/ticket/TicketListPage.vue'),
+        props: true,
       }
     ]
   },
