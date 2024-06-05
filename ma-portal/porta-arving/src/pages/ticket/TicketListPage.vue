@@ -98,7 +98,10 @@
                 </div>
 
                 <div class="col-auto">
-                  <q-btn round color="primary" icon="add" size="10px">
+                  <q-btn round color="primary"
+                         icon="add"
+                         size="10px"
+                         @click="$router.push({name:'ticketEdit', params: {accountId: accountId}})">
                     <q-tooltip>
                       Добавить новый чек
                     </q-tooltip>
@@ -108,28 +111,29 @@
             </q-card-section>
             <q-separator/>
             <q-card-section>
-              <div v-if="isEmptyList(storeTicket.getTicketList.days)">Операции не найдены</div>
-              <q-timeline color="secondary" v-if="!isEmptyList(storeTicket.getTicketList.days)">
-                <q-timeline-entry v-for="(itemDay, indexDay) in storeTicket.getTicketList.days" :key="indexDay"
-                                  :title="formattedDate(itemDay.dayDate)"
-                                  :subtitle="formattedNumber(itemDay.sumOfDay)">
-                  <div v-for="(itemTicket, indexTicket) in itemDay.tickets"
-                       :key="indexTicket" style="padding-bottom: 20px">
-                    <q-card class="my-card" flat bordered>
-                      <!-- Заголовок чека -->
-                      <q-card-section>
-                        <div class="text-h6 q-mb-xs" v-if="itemTicket.ticketDirection==='EXPENDITURE'">
-                          <q-icon name="arrow_circle_down" color="blue" size="30px"/>
-                          Расход
+              <q-scroll-area style="height: 1100px; width: auto;">
+                <div v-if="isEmptyList(storeTicket.getTicketList.days)">Операции не найдены</div>
+                <q-timeline color="secondary" v-if="!isEmptyList(storeTicket.getTicketList.days)">
+                  <q-timeline-entry v-for="(itemDay, indexDay) in storeTicket.getTicketList.days" :key="indexDay"
+                                    :subtitle="formattedDate(itemDay.dayDate)"
+                                    :title="formattedNumber(itemDay.sumOfDay)">
+                    <div v-for="(itemTicket, indexTicket) in itemDay.tickets"
+                         :key="indexTicket" style="padding-bottom: 20px">
+                      <q-card class="my-card" flat bordered>
+                        <!-- Заголовок чека -->
+                        <div style="padding-left: 20px; padding-top: 5px">
+                          <div class="text q-mb-sm" v-if="itemTicket.ticketDirection==='EXPENDITURE'">
+                            <q-icon name="arrow_circle_down" color="blue" size="20px"/>
+                            Расход
+                          </div>
+                          <div class="text q-mb-sm" v-if="itemTicket.ticketDirection==='INCOME'">
+                            <q-icon name="arrow_circle_up" color="green" size="20px"/>
+                            Доход
+                          </div>
                         </div>
-                        <div class="text-h6 q-mb-xs" v-if="itemTicket.ticketDirection==='INCOME'">
-                          <q-icon name="arrow_circle_up" color="green" size="30px"/>
-                          Доход
-                        </div>
-                      </q-card-section>
-                      <q-separator/>
-                      <!-- Тело чека -->
-                      <q-card-section>
+                        <q-separator/>
+                        <!-- Тело чека -->
+
                         <!-- Список операций -->
                         <q-list>
                           <!-- Отдельная операция -->
@@ -143,7 +147,7 @@
                               </q-item-label>
                             </q-item-section>
                             <q-item-section>
-                              <div class="col-1">
+                              <div class="column items-center self-start">
                                 <q-badge outline color="primary" style="size: 5px">
                                   {{ itemOperation.category.name }}
                                 </q-badge>
@@ -163,15 +167,16 @@
                         <q-list>
                           <q-item>
                             <q-item-section>
-                              <div style="text-align: right">{{ formattedNumber(itemTicket.totalSum) }}</div>
+                              <div style="text-align: right"><b>{{ formattedNumber(itemTicket.totalSum) }}</b></div>
                             </q-item-section>
                           </q-item>
                         </q-list>
-                      </q-card-section>
-                    </q-card>
-                  </div>
-                </q-timeline-entry>
-              </q-timeline>
+
+                      </q-card>
+                    </div>
+                  </q-timeline-entry>
+                </q-timeline>
+              </q-scroll-area>
             </q-card-section>
             <q-separator/>
           </q-card>
@@ -200,18 +205,21 @@ export default defineComponent({
     const storeTicket = useTicketStore();
 
     const startDate = (date.formatDate(date.startOfDate(new Date(), 'month'), 'YYYY-MM-DD'));
-    const endDate = (date.formatDate(date.startOfDate(new Date(), 'month'), 'YYYY-MM-DD'));
+    const endDate = (date.formatDate(date.endOfDate(new Date(), 'month'), 'YYYY-MM-DD'));
 
     // load data
     storeAccount.loadAccountById(props.accountId)
-    storeTicket.loadTicketsByFilter(props.accountId, startDate, endDate)
+    storeTicket.actionLoadTicketsByFilter(props.accountId, startDate, endDate)
 
     const filterName = ref('');
     const filterStartDate = ref(startDate);
     const filterEndDate = ref(endDate);
 
     const findTicketsMethod = () => {
-      storeTicket.loadTicketsByFilter(props.accountId, filterStartDate.value, filterEndDate.value)
+      storeTicket.actionLoadTicketsByFilter(props.accountId,
+        filterStartDate.value,
+        filterEndDate.value,
+        filterName.value)
     }
 
     return {

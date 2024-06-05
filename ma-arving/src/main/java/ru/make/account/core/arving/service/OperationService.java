@@ -11,6 +11,8 @@ import ru.make.account.core.arving.web.mapper.OperationMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.make.account.core.arving.util.SearchUtils.likeText;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,7 +42,14 @@ public class OperationService {
                 .collect(Collectors.toList());
     }
 
-    private OperationDto toDto(Operation operation) {
+    public List<OperationDto> getOperationByTicketIdAndLikeName(Long ticketId, String name) {
+        var operations = operationRepository.findLikeText(ticketId, likeText(name));
+        return operations.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public OperationDto toDto(Operation operation) {
         var result = operationMapper.toDto(operation);
         result.setCategory(categoryService.getCategoryById(operation.getCategoryId()));
         return result;

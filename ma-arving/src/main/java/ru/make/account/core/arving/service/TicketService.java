@@ -3,10 +3,12 @@ package ru.make.account.core.arving.service;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.model.Ticket;
 import ru.make.account.core.arving.model.Ticket_;
@@ -21,7 +23,10 @@ import ru.make.account.core.arving.web.mapper.TicketMapper;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,15 +90,15 @@ public class TicketService {
         log.info("запрос на получение списка чеков");
         checkAccess(request.getAccountId());
 
-        List<Predicate> predicates = new ArrayList<>();
         Specification<Ticket> spec = (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
             predicates.add(builder.greaterThanOrEqualTo(
                     root.get(Ticket_.date),
                     Optional.ofNullable(request.getFrom()).orElseGet(() -> YearMonth.now().atDay(1)))
             );
             predicates.add(builder.lessThanOrEqualTo(
                     root.get(Ticket_.date),
-                    Optional.ofNullable(request.getFrom()).orElseGet(() -> YearMonth.now().atEndOfMonth()))
+                    Optional.ofNullable(request.getTo()).orElseGet(() -> YearMonth.now().atEndOfMonth()))
             );
             predicates.add(builder.equal(root.get(Ticket_.ACCOUNT_ID), request.getAccountId()));
             if (Objects.nonNull(request.getDirections())) {
@@ -104,11 +109,14 @@ public class TicketService {
         };
 
         var result = ticketRepository.findAll(spec, Sort.by(Sort.Order.desc(Ticket_.DATE))).stream()
-                .map(this::toDto)
+                .map(ticket -> {
+                    if (StringUtils.hasLength(request.getName()))
+                        return toDto(ticket, request.getName());
+                    return toDto(ticket);
+                })
                 .collect(Collectors.toList());
         log.info("найдено записей [{}]", result.size());
         return result;
-
     }
 
     public TicketListResponseDto getTicketsGroupByDay(TicketFilterDto request) {
@@ -116,6 +124,9 @@ public class TicketService {
         result.setDays(new ArrayList<>());
 
         for (TicketDto ticket : getTickets(request)) {
+            if (CollectionUtils.isEmpty(ticket.getOperations()))
+                continue;
+
             if (result.getDays().isEmpty()) {
                 result.getDays().add(TicketsOfDayDto.builder()
                         .dayDate(ticket.getDate())
@@ -141,9 +152,11 @@ public class TicketService {
                 }
             } else {
                 // дата отличается
+                List<TicketDto> newTickets = new ArrayList<>();
+                newTickets.add(ticket);
                 var newDay = TicketsOfDayDto.builder()
                         .dayDate(ticket.getDate())
-                        .tickets(Collections.singletonList(ticket))
+                        .tickets(newTickets)
                         .build();
                 switch (ticketDirection) {
                     case EXPENDITURE -> newDay.setSumOfDay(BigDecimal.ZERO.subtract(ticketTotalSum));
@@ -166,6 +179,12 @@ public class TicketService {
     private TicketDto toDto(Ticket ticket) {
         var result = ticketMapper.toDto(ticket);
         result.setOperations(operationService.getOperationByTicketId(ticket.getId()));
+        return result;
+    }
+
+    private TicketDto toDto(Ticket ticket, String likeText) {
+        var result = ticketMapper.toDto(ticket);
+        result.setOperations(operationService.getOperationByTicketIdAndLikeName(ticket.getId(), likeText));
         return result;
     }
 }

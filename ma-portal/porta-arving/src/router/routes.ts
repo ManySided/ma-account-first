@@ -23,6 +23,12 @@ const routes: RouteRecordRaw[] = [
         name: 'tickets',
         component: () => import('pages/ticket/TicketListPage.vue'),
         props: true,
+      },
+      {
+        path: 'ticket/:accountId/edit',
+        name: 'ticketEdit',
+        component: () => import('pages/ticket/TicketEditPage.vue'),
+        props: true,
       }
     ]
   },

@@ -8,9 +8,9 @@
   >
     <q-item-section>
       <q-item-label>
-        {{fieldName}}
+        {{ fieldName }}
       </q-item-label>
-      {{convertServer2View()}}
+      {{ convertServer2View() }}
     </q-item-section>
     <q-item-section side>
       <q-icon name="event" class="cursor-pointer" v-show="canChange">
@@ -45,6 +45,7 @@ interface DateProps {
   fieldName: string;
   canChange: boolean;
 }
+
 defineOptions({
   name: 'CustomFieldDateTime'
 });
@@ -54,7 +55,7 @@ const FORMAT_SERVER = 'YYYY-MM-DDTHH:mm:ss'
 const FORMAT_VIEW = 'DD.MM.YYYY HH:mm:ss'
 
 
-const dateVariable = defineModel('dateVariable')
+const dateVariable = defineModel('dateVariable', {default: ''})
 const convertServer2View = () => {
   return date.formatDate(date.extractDate(dateVariable.value as string, FORMAT_SERVER), FORMAT_VIEW);
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,4 +17,5 @@ public class CategoryDto {
     private Long parent;
     private Long accountId;
     private Boolean stuffFlag;
+    private List<CategoryDto> subCategories;
 }

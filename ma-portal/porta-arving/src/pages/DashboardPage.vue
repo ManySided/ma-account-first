@@ -1,38 +1,41 @@
 <template>
   <q-page>
-    <custom-field-date-time v-model:dateVariable="modelDate" field-name="Дата создания" can-change/>
+    <div style="padding: 5px">
+      <operation-edit-row :account-id="1" v-model:operationVariable="modelOperation"/>
+    </div>
     <div>
-      {{modelDate}}
-    </div>
-    <div class="q-pa-md row items-start q-gutter-md">
-      <q-card class="my-card">
-        <q-card-section>
-          Добро пожаловать
-          <q-btn flat @click="$router.push('workspace/account')" label="Счета"/>
-        </q-card-section>
-      </q-card>
-    </div>
-    <div class="q-pa-md row items-start q-gutter-md">
-      <q-card class="my-card">
-        <q-card-section>
-          Account statistic
-        </q-card-section>
-      </q-card>
+      <q-btn @click="updateCategory"/>
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
-import CustomFieldDateTime from 'components/utils/CustomFieldDateTime.vue';
+import OperationEditRow from 'components/utils/OperationEditRow.vue';
 
 export default defineComponent({
   name: 'DashboardPage',
-  components: {CustomFieldDateTime},
+  components: {OperationEditRow},
   setup() {
-    const modelDate = ref('2024-03-29T14:50:41');
+    const modelOperation = ref({
+      sum: 0,
+      name: '',
+      comment: '',
+      category: {}
+    });
+    const modelDataEmpty = ref();
+    const updateCategory = () => {
+      if (modelOperation.value &&  modelOperation.value.category) {
+        modelOperation.value.category = {
+          id: 3,
+          name: 'Одежда'
+        }
+      }
+    }
     return {
-      modelDate
+      modelOperation,
+      modelDataEmpty,
+      updateCategory
     }
   }
 });

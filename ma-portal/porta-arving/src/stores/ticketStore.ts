@@ -15,12 +15,33 @@ export const useTicketStore = defineStore('ticket', {
   },
 
   actions: {
-    loadTicketsByFilter(accountId: number,
-                        from: string,
-                        to: string,
-                        name?: string,
-                        categories?: Category[],
-                        directions?: number[]
+    actionSaveTicket(ticket: Ticket, callback: any) {
+      api.post('/api/service/ticket', ticket)
+        .then((response) => {
+          Notify.create({
+            color: 'primary',
+            position: 'top',
+            message: 'Чек сохранён успешно',
+            icon: 'check_circle_outline'
+          })
+          if (callback)
+            callback()
+        })
+        .catch((error) => {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.message,
+            icon: 'report_problem'
+          })
+        })
+    },
+    actionLoadTicketsByFilter(accountId: number,
+                              from: string,
+                              to: string,
+                              name?: string,
+                              categories?: Category[],
+                              directions?: number[]
     ) {
       api.post('/api/service/ticket/filter',
         {

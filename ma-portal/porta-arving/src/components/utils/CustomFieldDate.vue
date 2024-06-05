@@ -7,7 +7,7 @@
     :class="$q.dark.isActive ? 'bg-grey-9 text-white' : 'bg-grey-2'"
   >
     <q-item-section>
-      <q-item-label style="color: #a4a4a4; font-size: 12px">
+      <q-item-label style="color: #a4a4a4; font-size: 14px">
         {{fieldName}}
       </q-item-label>
       {{convertServer2View()}}
