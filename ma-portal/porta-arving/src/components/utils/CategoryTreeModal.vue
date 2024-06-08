@@ -6,7 +6,7 @@
     <template v-slot:append>
       <q-icon
         name="format_list_bulleted"
-        :rules="[ val => val.length > 0 || 'Категория операции не указана']">
+        :rules="[ (val: string) => val && val.length > 0 || 'Категория операции не указана']">
         <q-popup-proxy cover>
           <div class="q-pa-md q-gutter-sm">
             <q-input ref="filterRef" outlined v-model="filterRow" label="Фильтр">

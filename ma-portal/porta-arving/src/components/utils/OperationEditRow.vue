@@ -29,8 +29,8 @@
                         bordered separator>
                   <q-item clickable v-ripple v-for="(itemOperation, indexOperation) in operationStore.getLikedGroups"
                           :key="indexOperation">
-                    <q-item-section @click="getOperationByName(itemOperation)"
-                                    @click.once="$refs['popup-proxy'].hide()">
+                    <q-item-section @click="getOperationByName(itemOperation)">
+                      <!--@click.once="$refs['popup-proxy'].hide()"-->
                       {{ itemOperation }}
                     </q-item-section>
                   </q-item>
@@ -119,8 +119,9 @@ const findLikeOperations = () => {
   operationStore.actionFindLikedGroups(filterRow.value, props.accountId);
 }
 const getOperationByName = (selectedName: string) => {
-  if (operationVariable.value)
+  if (operationVariable.value) {
     operationStore.actionFindLastOperationByNameAndFill(selectedName, props.accountId, operationVariable.value)
+  }
 }
 // validate
 const isValidName = computed(() => {

@@ -1,23 +1,23 @@
 import {defineStore} from 'pinia';
-import Ticket, {Category} from 'src/model/dto/TicketDto';
+import Ticket, {Category, TicketList} from 'src/model/dto/TicketDto';
 import {api} from 'boot/axios';
 import {Notify} from 'quasar';
 
 export const useTicketStore = defineStore('ticket', {
   state: () => ({
-    tickets: [] as Ticket[]
+    ticketsOfDay: {} as TicketList
   }),
 
   getters: {
-    getTicketList(state) {
-      return state.tickets;
+    getTicketsOfDayList(state) {
+      return state.ticketsOfDay;
     },
   },
 
   actions: {
     actionSaveTicket(ticket: Ticket, callback: any) {
       api.post('/api/service/ticket', ticket)
-        .then((response) => {
+        .then(() => {
           Notify.create({
             color: 'primary',
             position: 'top',
@@ -52,7 +52,7 @@ export const useTicketStore = defineStore('ticket', {
           categories: categories,
           directions: directions
         }).then((response) => {
-        this.tickets = response.data
+        this.ticketsOfDay = response.data
       })
         .catch((error) => {
           Notify.create({

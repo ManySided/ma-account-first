@@ -164,8 +164,6 @@ export default defineComponent({
         category: {name: ''},
         isActive: true
       });
-      if (scrollOperationRef.value)
-        scrollOperationRef.value.setScrollPosition('vertical', 3000)
     }
     const getNumberPosition = (itemIndex: number) => {
       if (itemIndex) {
@@ -187,8 +185,6 @@ export default defineComponent({
         .reduce((sum, current) => Number(sum) + Number(current.sum), Number(0));
     }
     const saveTicket = () => {
-      console.log("сохраянем чек. Валидация")
-      console.log(isValidTicket(thisTicket.value))
       if (isValidTicket(thisTicket.value)) {
         storeTicket.actionSaveTicket(thisTicket.value, () => {
           leavePage()

@@ -112,9 +112,9 @@
             <q-separator/>
             <q-card-section>
               <q-scroll-area style="height: 1100px; width: auto;">
-                <div v-if="isEmptyList(storeTicket.getTicketList.days)">Операции не найдены</div>
-                <q-timeline color="secondary" v-if="!isEmptyList(storeTicket.getTicketList.days)">
-                  <q-timeline-entry v-for="(itemDay, indexDay) in storeTicket.getTicketList.days" :key="indexDay"
+                <div v-if="isEmptyList(storeTicket.getTicketsOfDayList)">Операции не найдены</div>
+                <q-timeline color="secondary" v-if="!isEmptyList(storeTicket.getTicketsOfDayList)">
+                  <q-timeline-entry v-for="(itemDay, indexDay) in storeTicket.getTicketsOfDayList.days" :key="indexDay"
                                     :subtitle="formattedDate(itemDay.dayDate)"
                                     :title="formattedNumber(itemDay.sumOfDay)">
                     <div v-for="(itemTicket, indexTicket) in itemDay.tickets"
@@ -149,7 +149,7 @@
                             <q-item-section>
                               <div class="column items-center self-start">
                                 <q-badge outline color="primary" style="size: 5px">
-                                  {{ itemOperation.category.name }}
+                                  {{ getCategoryName(itemOperation) }}
                                 </q-badge>
                               </div>
                             </q-item-section>
@@ -193,7 +193,7 @@ import {useAccountStore} from 'stores/accountStore';
 import {date} from 'quasar';
 import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import {useTicketStore} from 'stores/ticketStore';
-import {TicketsOfDay} from 'src/model/dto/TicketDto';
+import {Operation, TicketList} from 'src/model/dto/TicketDto';
 
 export default defineComponent({
   name: 'TicketListPage',
@@ -247,8 +247,15 @@ export default defineComponent({
       }
       return '';
     },
-    isEmptyList(days: TicketsOfDay[]) {
-      return days === undefined || days.length == 0;
+    isEmptyList(ticketList: TicketList) {
+      if (ticketList)
+        return ticketList.days === undefined || ticketList.days.length == 0;
+      return true
+    },
+    getCategoryName(operation: Operation) {
+      if (operation && operation.category)
+        return operation.category.name
+      return '';
     }
   }
 })
