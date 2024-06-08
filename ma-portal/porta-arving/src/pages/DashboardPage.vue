@@ -1,46 +1,57 @@
 <template>
   <q-page>
-    <div style="padding: 5px">
-      <operation-edit-row :account-id="1" v-model:operationVariable="modelOperation"/>
-    </div>
-    <div>
-      <q-btn @click="updateCategory"/>
+    <div class="row">
+      <div class="column" v-for="(item, index) in storeAccount.getActualAccounts" :key="index" style="padding: 10px">
+        <q-card class="my-card">
+          <q-card-section>
+            <div class="text-h6">{{ item.name }}</div>
+            <div class="text-subtitle2">{{ formattedNumber(item.currentSum) }}
+              <q-icon :name="item.currency.symbol"/>
+            </div>
+          </q-card-section>
+
+          <q-separator/>
+
+          <q-card-actions vertical>
+            <q-btn flat @click="$router.push({name:'tickets', params: {accountId: item.id}})">
+              Опреации
+            </q-btn>
+          </q-card-actions>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
-import OperationEditRow from 'components/utils/OperationEditRow.vue';
+import {defineComponent} from 'vue';
+import {useAccountStore} from 'stores/accountStore';
 
 export default defineComponent({
   name: 'DashboardPage',
-  components: {OperationEditRow},
   setup() {
-    const modelOperation = ref({
-      sum: 0,
-      name: '',
-      comment: '',
-      category: {}
-    });
-    const modelDataEmpty = ref();
-    const updateCategory = () => {
-      if (modelOperation.value &&  modelOperation.value.category) {
-        modelOperation.value.category = {
-          id: 3,
-          name: 'Одежда'
-        }
-      }
+    // init
+    const storeAccount = useAccountStore();
+
+    // load data
+    storeAccount.loadAccounts()
+
+    // methods
+    const formattedNumber = (n: number) => {
+      if (n)
+        return n.toLocaleString();
+      return '';
     }
     return {
-      modelOperation,
-      modelDataEmpty,
-      updateCategory
+      storeAccount,
+      formattedNumber
     }
   }
 });
 </script>
 
-<style scoped>
-
+<style lang="sass" scoped>
+.my-card
+  width: 100%
+  max-width: 250px
 </style>

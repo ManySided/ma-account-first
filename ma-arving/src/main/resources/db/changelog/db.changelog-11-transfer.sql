@@ -11,6 +11,7 @@ create table spatium.remittance
     data_perevoda      DATE          not null DEFAULT CURRENT_DATE,
     user_portal_id     uuid          not null,
     summa_perevoda     numeric(9, 2) not null,
+    komment            text,
     moving_snatia      bigint        not null
         constraint transfer_ticket_in_id_fk
             references spatium.moving_in_ofu,

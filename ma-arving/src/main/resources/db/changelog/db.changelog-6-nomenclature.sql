@@ -13,7 +13,7 @@ create table spatium.goods_nomenclature
 comment on column spatium.goods_nomenclature.nazvanie is 'Название номенклатуры';
 
 create sequence if not exists spatium.nomenclature_id_seq
-    start with 100
+    start with 500
     increment by 1
     no minvalue
     no maxvalue

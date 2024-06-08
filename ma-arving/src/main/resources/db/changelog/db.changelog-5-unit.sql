@@ -19,7 +19,7 @@ comment on column spatium.unit_goods.size_base is 'Размер ед. измер
 comment on column spatium.unit_goods.base is 'Базовая ед. измерения';
 
 create sequence if not exists spatium.unit_id_seq
-    start with 100
+    start with 500
     increment by 1
     no minvalue
     no maxvalue

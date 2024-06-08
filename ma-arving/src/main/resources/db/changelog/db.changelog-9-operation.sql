@@ -33,7 +33,7 @@ comment on column spatium.operations.is_aktivno is 'Флаг активност�
 comment on column spatium.operations.is_stuff_only is 'Флаг служебная операция';
 
 create sequence if not exists spatium.operation_id_seq
-    start with 100
+    start with 25000
     increment by 1
     no minvalue
     no maxvalue

@@ -38,4 +38,7 @@ public class MoneyTransfer {
 
     @Column(name = "moving_zachislenia")
     private Long outTicketId;
+
+    @Column(name = "komment")
+    private String comment;
 }

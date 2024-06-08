@@ -25,7 +25,7 @@ comment on column spatium.purchase.goods_unit is 'Единицы измерен�
 comment on column spatium.purchase.skidka is 'Скидка';
 
 create sequence if not exists spatium.purchase_id_seq
-    start with 100
+    start with 10000
     increment by 1
     no minvalue
     no maxvalue

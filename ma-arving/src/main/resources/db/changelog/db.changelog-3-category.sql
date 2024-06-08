@@ -21,7 +21,7 @@ comment on column spatium.product_category.ofu_id is 'Идентификатор
 comment on column spatium.product_category.is_kategoria_slugebnaa is 'Флаг служебной категории';
 
 create sequence if not exists spatium.category_id_seq
-    start with 100
+    start with 150
     increment by 1
     no minvalue
     no maxvalue

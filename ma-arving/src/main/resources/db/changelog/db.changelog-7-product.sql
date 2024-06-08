@@ -10,14 +10,14 @@ create table spatium.goods
     goods_nomenclature_id bigint        not null
         constraint product_nomenclature_id_fk
             references spatium.goods_nomenclature,
-    marka                 varchar(4096) not null
+    marka                 varchar(4096)
 );
 
 comment on column spatium.goods.goods_nomenclature_id is 'ID номенклатуры товара';
 comment on column spatium.goods.marka is 'Марка товара';
 
 create sequence if not exists spatium.product_id_seq
-    start with 100
+    start with 1000
     increment by 1
     no minvalue
     no maxvalue

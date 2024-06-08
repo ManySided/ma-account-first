@@ -23,7 +23,7 @@ comment on column spatium.moving_in_ofu.user_portal_id is 'Пользовате�
 comment on column spatium.moving_in_ofu.skidka_round is 'Скидка';
 
 create sequence if not exists spatium.ticket_id_seq
-    start with 100
+    start with 10000
     increment by 1
     no minvalue
     no maxvalue

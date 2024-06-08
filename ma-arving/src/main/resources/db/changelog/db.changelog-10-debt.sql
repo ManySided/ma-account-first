@@ -64,7 +64,7 @@ comment on column spatium.debt_moving.debt_id is 'ID долга';
 comment on column spatium.debt_moving.status_udalen is 'Признак удалёния операции';
 
 create sequence if not exists spatium.debt_operation_id_seq
-    start with 100
+    start with 200
     increment by 1
     no minvalue
     no maxvalue

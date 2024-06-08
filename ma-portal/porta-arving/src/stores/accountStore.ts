@@ -13,6 +13,19 @@ export const useAccountStore = defineStore('account', {
     getAccounts(state) {
       return state.accounts;
     },
+    getActualAccounts(state) {
+      return state.accounts
+        .filter((value) => value.actual)
+        .sort((n1, n2) => {
+          if (n1.id && n2.id) {
+            if (n1.id > n2.id)
+              return 1;
+            if (n1.id < n2.id)
+              return -1;
+          }
+          return 0
+        });
+    },
     getCurrentAccountName(state) {
       return state.currentAccount.name;
     },

@@ -18,7 +18,7 @@
                   <q-menu anchor="top end" self="top start">
                     <q-list>
                       <q-item
-                        v-for="(item, index) in storeAccount.getAccounts" :key="index"
+                        v-for="(item, index) in storeAccount.getActualAccounts" :key="index"
                         dense
                         clickable
                       >
