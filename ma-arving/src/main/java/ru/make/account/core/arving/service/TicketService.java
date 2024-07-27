@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.model.Ticket;
+import ru.make.account.core.arving.model.TicketDirectionEnum;
 import ru.make.account.core.arving.model.Ticket_;
 import ru.make.account.core.arving.repository.TicketRepository;
 import ru.make.account.core.arving.security.SecurityHandler;
@@ -60,18 +61,127 @@ public class TicketService {
             operationService.saveOperation(operation);
         }
 
+        changeCurrentSum(request.getAccountId(), request.getTicketDirection(), ticketSum);
+        return ticket.getId();
+    }
+
+    @Transactional
+    public Long updateTicket(TicketDto request) {
+        log.info("обновление чека [{}]", request.getId());
+        checkAccess(request.getAccountId());
+
+        var ticket = ticketRepository.findById(request.getId())
+                .orElseThrow(() -> new ProcessException("Чек не найден"));
+        if (!ticket.getDate().equals(request.getDate())) {
+            log.info("обновление даты чека [{}]", request.getId());
+            ticket.setDate(request.getDate());
+            ticketRepository.save(ticket);
+        }
+        if (!ticket.getTicketDirection().equals(request.getTicketDirection())) {
+            var operations = operationService.getOperationByTicketId(ticket.getId());
+            var ticketSum = getOperationSum(operations);
+            log.info("откат суммы чека [{}]", request.getId());
+            changeCurrentSum(ticket.getAccountId(),
+                    reversDirection(ticket.getTicketDirection()),
+                    ticketSum);
+            log.info("добавление новой суммы чека [{}]", request.getId());
+            changeCurrentSum(ticket.getAccountId(),
+                    request.getTicketDirection(),
+                    ticketSum);
+            log.info("обновление направления с [{}] на [{}] для чека [{}]",
+                    ticket.getTicketDirection(), request.getTicketDirection(), ticket.getId());
+            ticket.setTicketDirection(request.getTicketDirection());
+        }
+        return ticket.getId();
+    }
+
+    @Transactional
+    public Long updateOperationOfTicket(OperationDto request) {
+        log.info("обновление операции [{}] в чеке", request.getId());
+        var operation = operationService.getOperationById(request.getId());
+        var ticketId = operation.getTicketId();
+        var ticket = getTicket(ticketId);
+        checkAccess(ticket.getAccountId());
+
+        operationService.deleteOperation(request.getId());
+        log.info("старая операция [{}] удалена", request.getId());
+        log.info("откат суммы по операции [{}]", request.getId());
+        changeCurrentSum(ticket.getAccountId(),
+                reversDirection(ticket.getTicketDirection()),
+                operation.getSum());
+
+        log.info("создание новой операции");
+        operation.setId(null);
+        operation.setSum(request.getSum());
+        operation.setName(request.getName());
+        operation.setComment(request.getComment());
+        operation.setCategory(request.getCategory());
+        operation.setPurchaseId(request.getPurchaseId());
+        operation.setTicketId(request.getTicketId());
+        operation.setIsActive(Boolean.TRUE);
+        var createdOperationId = operationService.saveOperation(operation);
+        log.info("добавление суммы по новой операции операции [{}]", createdOperationId);
+        changeCurrentSum(ticket.getAccountId(),
+                ticket.getTicketDirection(),
+                request.getSum());
+
+        return createdOperationId;
+    }
+
+    public void removeTicket(Long ticketId) {
+        log.info("удаление чека [{}]", ticketId);
+        var ticket = getTicket(ticketId);
+        checkAccess(ticket.getAccountId());
+
+        var operations = Optional.ofNullable(ticket.getOperations())
+                .orElse(new ArrayList<>());
+        if (operations.isEmpty())
+            log.info("в чеке [{}] отсутствуют операции!", ticketId);
+        else {
+            operations.stream()
+                    .map(OperationDto::getId)
+                    .forEach(operationService::deleteOperation);
+
+            var ticketSum = operations.stream()
+                    .map(OperationDto::getSum)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            changeCurrentSum(ticket.getAccountId(),
+                    reversDirection(ticket.getTicketDirection()),
+                    ticketSum);
+        }
+    }
+
+    private void changeCurrentSum(Long accountId,
+                                  TicketDirectionEnum direction,
+                                  BigDecimal sum) {
         log.info("обновление суммы счёта");
         BigDecimal finalAmount;
-        switch (request.getTicketDirection()) {
+        switch (direction) {
             // прибыль
-            case INCOME -> finalAmount = ticketSum;
+            case INCOME -> finalAmount = sum;
             // убыток
-            case EXPENDITURE -> finalAmount = ticketSum.negate();
+            case EXPENDITURE -> finalAmount = sum.negate();
             default -> throw new ProcessException("Невозможно определить направление чека");
         }
-        accountService.addSum(request.getAccountId(), finalAmount);
+        accountService.addSum(accountId, finalAmount);
+    }
 
-        return ticket.getId();
+    private BigDecimal getOperationSum(List<OperationDto> operations) {
+        return operations.stream()
+                .map(OperationDto::getSum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private TicketDirectionEnum reversDirection(TicketDirectionEnum direction) {
+        TicketDirectionEnum resultDirection;
+        switch (direction) {
+            // прибыль
+            case INCOME -> resultDirection = TicketDirectionEnum.EXPENDITURE;
+            // убыток
+            case EXPENDITURE -> resultDirection = TicketDirectionEnum.INCOME;
+            default -> throw new ProcessException("Невозможно определить направление чека");
+        }
+        return resultDirection;
     }
 
     public TicketDto getTicket(Long request) {
@@ -168,8 +278,8 @@ public class TicketService {
         return result;
     }
 
-    private void checkAccess(Long ticketId) {
-        accountService.checkAccessToAccount(ticketId);
+    private void checkAccess(Long accountId) {
+        accountService.checkAccessToAccount(accountId);
     }
 
     private void checkAccess(TicketDto ticket) {

@@ -111,7 +111,7 @@
             </q-card-section>
             <q-separator/>
             <q-card-section>
-              <q-scroll-area style="height: 1100px; width: auto;">
+              <q-scroll-area :style="{ height: windowHeight-200+'px', width: 'auto' }">
                 <div v-if="isEmptyList(storeTicket.getTicketsOfDayList)">Операции не найдены</div>
                 <q-timeline color="secondary" v-if="!isEmptyList(storeTicket.getTicketsOfDayList)">
                   <q-timeline-entry v-for="(itemDay, indexDay) in storeTicket.getTicketsOfDayList.days" :key="indexDay"
@@ -201,6 +201,9 @@ export default defineComponent({
   props: ['accountId'],
   setup(props) {
     // init
+    const windowWidth = ref(window.innerWidth)
+    const windowHeight = ref(window.innerHeight)
+
     const storeAccount = useAccountStore();
     const storeTicket = useTicketStore();
 
@@ -230,6 +233,8 @@ export default defineComponent({
       filterName,
       filterStartDate,
       filterEndDate,
+      windowWidth,
+      windowHeight,
       //methods
       findTicketsMethod,
     }

@@ -67,12 +67,7 @@
                 </q-item>
               </div>
               <div class="col-2">
-                <q-btn flat
-                       @click="addOperation"
-                       padding="md"
-                       icon="add_circle_outline"
-                       color="secondary">Добавить операцию
-                </q-btn>
+
               </div>
               <div class="col-4 column items-end">
                 <q-btn flat
@@ -86,7 +81,8 @@
             <q-separator/>
             <q-card-section>
               <!-- Секция операций -->
-              <q-scroll-area style="height: 900px; width: 100%;" ref="scrollOperationRef">
+              <q-scroll-area :style="{ height: windowHeight-250+'px', width: 100+'%' }"
+                             ref="scrollOperationRef">
                 <q-list separator>
                   <q-item v-for="(itemOperation, indexOperation) in thisTicket.operations" :key="indexOperation">
                     <q-item-section side top>
@@ -102,6 +98,14 @@
                       />
                     </q-item-section>
                   </q-item>
+                  <div class="col-2 column items-end">
+                    <q-btn flat
+                           @click="addOperation"
+                           padding="md"
+                           icon="add_circle_outline"
+                           color="secondary">Добавить операцию
+                    </q-btn>
+                  </div>
                 </q-list>
               </q-scroll-area>
             </q-card-section>
@@ -145,6 +149,9 @@ export default defineComponent({
       totalSum: 0
     } as Ticket);
     const scrollOperationRef = ref(null)
+
+    const windowWidth = ref(window.innerWidth)
+    const windowHeight = ref(window.innerHeight)
     // store
     const storeAccount = useAccountStore();
     const storeTicket = useTicketStore();
@@ -210,6 +217,8 @@ export default defineComponent({
       scrollOperationRef,
       ticketOptions,
       thisTicket,
+      windowWidth,
+      windowHeight,
       // methods
       formattedNumber,
       addOperation,

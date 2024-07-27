@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -78,6 +78,167 @@ public class TicketServiceTest extends AbstractTestBase {
                         .findFirst()
                         .orElseThrow(() -> new NullPointerException("Отсутствует операция")),
                 operation2);
+    }
+
+    @Test
+    public void testUpdateTicketSuccess() throws Exception {
+        // подготовка
+        var accountBefore = getAccount();
+        var ticketDate = LocalDate.of(2024, 4, 30);
+        var ticketDirection = TicketDirectionEnum.EXPENDITURE;
+        var operation1 = OperationDto.builder()
+                .name("хлеб")
+                .sum(BigDecimal.valueOf(36.36))
+                .category(CategoryDto.builder()
+                        .id(getCategoryProductsId())
+                        .build())
+                .comment("купил хлеб")
+                .build();
+        var operation2 = OperationDto.builder()
+                .name("автобус")
+                .sum(BigDecimal.valueOf(37))
+                .category(
+                        CategoryDto.builder()
+                                .id(getCategoryTransportId())
+                                .build())
+                .comment("поездка за хлебом")
+                .build();
+
+        // выполнение
+        var ticketCreateRequest = TicketDto.builder()
+                .ticketDirection(ticketDirection)
+                .date(ticketDate)
+                .accountId(accountBefore.getId())
+                .operations(List.of(operation1, operation2))
+                .build();
+        var response = ticketService.saveTicket(ticketCreateRequest);
+        accountBefore = getAccount();
+
+        // смена даты чека
+        var ticket = ticketService.getTicket(response);
+        ticket.setDate(LocalDate.of(2024, 6, 30));
+        ticketService.updateTicket(ticket);
+        ticket = ticketService.getTicket(response);
+        assertEquals(LocalDate.of(2024, 6, 30), ticket.getDate());
+        var accountAfter = getAccount();
+        assertEquals(accountBefore.getCurrentSum(), accountAfter.getCurrentSum());
+        accountBefore = getAccount();
+
+        // смена даты чека и направления чека
+        ticket = ticketService.getTicket(response);
+        ticket.setDate(LocalDate.of(2024, 7, 30));
+        ticket.setTicketDirection(TicketDirectionEnum.INCOME);
+        ticketService.updateTicket(ticket);
+        ticket = ticketService.getTicket(response);
+        assertEquals(LocalDate.of(2024, 7, 30), ticket.getDate());
+        assertEquals(TicketDirectionEnum.INCOME, ticket.getTicketDirection());
+        accountAfter = getAccount();
+        var differenceSum = accountBefore.getCurrentSum().subtract(accountAfter.getCurrentSum());
+        assertEquals(BigDecimal.valueOf(146.72).negate(), differenceSum);
+    }
+
+    @Test
+    public void testUpdateOperationOfTicketSuccess() throws Exception {
+        // подготовка
+        var accountBefore = getAccount();
+        var ticketDate = LocalDate.of(2024, 4, 30);
+        var ticketDirection = TicketDirectionEnum.EXPENDITURE;
+        var operation1 = OperationDto.builder()
+                .name("хлеб")
+                .sum(BigDecimal.valueOf(36.36))
+                .category(CategoryDto.builder()
+                        .id(getCategoryProductsId())
+                        .build())
+                .comment("купил хлеб")
+                .build();
+        var operation2 = OperationDto.builder()
+                .name("автобус")
+                .sum(BigDecimal.valueOf(37))
+                .category(
+                        CategoryDto.builder()
+                                .id(getCategoryTransportId())
+                                .build())
+                .comment("поездка за хлебом")
+                .build();
+
+        var ticketCreateRequest = TicketDto.builder()
+                .ticketDirection(ticketDirection)
+                .date(ticketDate)
+                .accountId(accountBefore.getId())
+                .operations(List.of(operation1, operation2))
+                .build();
+        var response = ticketService.saveTicket(ticketCreateRequest);
+
+        // смена даты чека
+        var ticket = ticketService.getTicket(response);
+        var operation = ticket.getOperations().stream()
+                .filter(item -> item.getName().equals("хлеб"))
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException("Операция не найдена"));
+        operation.setName("Крутой хлебушек");
+        operation.setSum(BigDecimal.valueOf(50.8));
+        operation.setComment(null);
+        ticketService.updateOperationOfTicket(operation);
+
+        // проверка
+        ticket = ticketService.getTicket(response);
+        var account = getAccount();
+        assertEquals("9912.20", account.getCurrentSum().toString());
+        var operationOpt = ticket.getOperations().stream()
+                .filter(item -> item.getName().equals("хлеб"))
+                .findFirst();
+        assertFalse(operationOpt.isPresent());
+        operationOpt = ticket.getOperations().stream()
+                .filter(item -> item.getName().equals("Крутой хлебушек"))
+                .findFirst();
+        assertEquals("Крутой хлебушек", operationOpt.get().getName());
+        assertEquals("50.80", operationOpt
+                .map(OperationDto::getSum)
+                .map(BigDecimal::toString)
+                .orElse(null));
+        assertNull(operationOpt.get().getComment());
+
+    }
+
+    @Test
+    public void testRemoveTicketSuccess() throws Exception {
+        var accountBefore = getAccount();
+        var ticketDate = LocalDate.of(2024, 4, 30);
+        var ticketDirection = TicketDirectionEnum.EXPENDITURE;
+        var operation1 = OperationDto.builder()
+                .name("хлеб")
+                .sum(BigDecimal.valueOf(36.36))
+                .category(CategoryDto.builder()
+                        .id(getCategoryProductsId())
+                        .build())
+                .comment("купил хлеб")
+                .build();
+        var operation2 = OperationDto.builder()
+                .name("автобус")
+                .sum(BigDecimal.valueOf(37))
+                .category(
+                        CategoryDto.builder()
+                                .id(getCategoryTransportId())
+                                .build())
+                .comment("поездка за хлебом")
+                .build();
+
+        var ticketCreateRequest = TicketDto.builder()
+                .ticketDirection(ticketDirection)
+                .date(ticketDate)
+                .accountId(accountBefore.getId())
+                .operations(List.of(operation1, operation2))
+                .build();
+        var response = ticketService.saveTicket(ticketCreateRequest);
+
+        // удаление
+        ticketService.removeTicket(response);
+
+        // получение удалённого чека
+        var ticket = ticketService.getTicket(response);
+        assertEquals(0, ticket.getOperations().size());
+        var account = getAccount();
+        assertEquals(accountBefore.getCurrentSum(), account.getCurrentSum());
     }
 
     private void assertOperation(OperationDto actual, OperationDto request) {

@@ -3,6 +3,8 @@ package ru.make.account.core.arving.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.model.Operation;
 import ru.make.account.core.arving.repository.OperationRepository;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
@@ -23,6 +25,7 @@ public class OperationService {
 
     private final CategoryService categoryService;
 
+    @Transactional
     public Long saveOperation(OperationDto request) {
         log.info("создание операции");
         var operationEntity = operationMapper.toEntity(request);
@@ -33,6 +36,22 @@ public class OperationService {
         log.info("создана операция [{}]", operationEntity.getId());
 
         return operationEntity.getId();
+    }
+
+    @Transactional
+    public void deleteOperation(Long operationId) {
+        log.info("удаление операции [{}]", operationId);
+        var operation = operationRepository.findById(operationId)
+                .orElseThrow(() -> new ProcessException("Операция не найдена"));
+
+        operation.setIsActive(Boolean.FALSE);
+        operationRepository.save(operation);
+    }
+
+    public OperationDto getOperationById(Long operationId) {
+        var operation = operationRepository.findById(operationId)
+                .orElseThrow(() -> new ProcessException("Операция не найдена"));
+        return toDto(operation);
     }
 
     public List<OperationDto> getOperationByTicketId(Long ticketId) {

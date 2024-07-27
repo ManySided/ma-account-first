@@ -80,16 +80,17 @@ public class AccountService {
                 .orElse(null);
     }
 
+    @Transactional
     public void addSum(Long accountId, BigDecimal sum) {
-        log.info("обновление суммы счёта [{}]; добавление суммы  [{}]", accountId, sum);
+        log.info("> обновление суммы счёта [{}]; добавление суммы  [{}]", accountId, sum);
         var account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ProcessException("Счёт не найден"));
         if (account.getAccountCreator().equals(securityHandler.getUserId())) {
             var currentSum = account.getCurrentSum();
-            log.info("текущая сумма [{}]", currentSum);
+            log.info("> текущая сумма [{}]", currentSum);
             var newSum = currentSum.add(sum);
             account.setCurrentSum(newSum);
-            log.info("текущая сумма счёта [{}] обновлена до суммы [{}]", accountId, newSum);
+            log.info("> текущая сумма счёта [{}] обновлена до суммы [{}]", accountId, newSum);
             accountRepository.save(account);
         } else throw new ProcessException("Счёт не принадлежит пользователю");
     }
