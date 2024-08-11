@@ -62,6 +62,26 @@ export const useTicketStore = defineStore('ticket', {
             icon: 'report_problem'
           })
         })
+    },
+    actionDeleteOperation(operationId: number) {
+      const params = {operationId: operationId};
+      api.delete('/api/service/ticket/operation', {params})
+        .then((response) => {
+          Notify.create({
+            color: 'positive',
+            position: 'top',
+            message: 'Операция удалёна',
+            icon: 'done'
+          })
+        })
+        .catch((error) => {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.message,
+            icon: 'report_problem'
+          })
+        })
     }
   }
 });

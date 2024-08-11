@@ -52,4 +52,11 @@ public class CategoryService {
         }
         return upCategories;
     }
+
+    public List<CategoryDto> getCategory(Long accountId, String name) {
+        accountService.checkAccessToAccount(accountId);
+        return categoryRepository.findByAccountIdAndNameAndStuffFlagIsFalse(accountId, name).stream()
+                .map(categoryMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

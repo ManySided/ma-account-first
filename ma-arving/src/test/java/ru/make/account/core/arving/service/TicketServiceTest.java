@@ -241,6 +241,53 @@ public class TicketServiceTest extends AbstractTestBase {
         assertEquals(accountBefore.getCurrentSum(), account.getCurrentSum());
     }
 
+    @Test
+    public void testRemoveOperationOfTicketSuccess() throws Exception {
+        var accountBefore = getAccount();
+        var ticketDate = LocalDate.of(2024, 4, 30);
+        var ticketDirection = TicketDirectionEnum.EXPENDITURE;
+        var operation1 = OperationDto.builder()
+                .name("хлеб")
+                .sum(BigDecimal.valueOf(36.36))
+                .category(CategoryDto.builder()
+                        .id(getCategoryProductsId())
+                        .build())
+                .comment("купил хлеб")
+                .build();
+        var operation2 = OperationDto.builder()
+                .name("автобус")
+                .sum(BigDecimal.valueOf(37))
+                .category(
+                        CategoryDto.builder()
+                                .id(getCategoryTransportId())
+                                .build())
+                .comment("поездка за хлебом")
+                .build();
+
+        var ticketCreateRequest = TicketDto.builder()
+                .ticketDirection(ticketDirection)
+                .date(ticketDate)
+                .accountId(accountBefore.getId())
+                .operations(List.of(operation1, operation2))
+                .build();
+        var response = ticketService.saveTicket(ticketCreateRequest);
+
+        // удаление
+        var ticketCreated = ticketService.getTicket(response);
+        var operation = ticketCreated.getOperations().stream()
+                .filter(item -> item.getName().equals("автобус"))
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException());
+        ticketService.removeOperationOfTicket(operation.getId());
+
+        // провека
+        ticketCreated = ticketService.getTicket(response);
+        assertEquals(1, ticketCreated.getOperations().size());
+        assertEquals("хлеб", ticketCreated.getOperations().get(0).getName());
+        var account = getAccount();
+        assertEquals("9963.64", account.getCurrentSum().toString());
+    }
+
     private void assertOperation(OperationDto actual, OperationDto request) {
         assertEquals(request.getCategory().getId(), actual.getCategory().getId());
         assertEquals(request.getName(), actual.getName());

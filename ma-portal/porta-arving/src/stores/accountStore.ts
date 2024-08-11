@@ -120,7 +120,6 @@ export const useAccountStore = defineStore('account', {
             message: error.message,
             icon: 'report_problem'
           })
-          console.log(error)
         })
     }
   }

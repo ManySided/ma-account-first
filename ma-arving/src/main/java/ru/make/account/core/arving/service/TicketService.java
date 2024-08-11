@@ -128,6 +128,7 @@ public class TicketService {
         return createdOperationId;
     }
 
+    @Transactional
     public void removeTicket(Long ticketId) {
         log.info("удаление чека [{}]", ticketId);
         var ticket = getTicket(ticketId);
@@ -149,6 +150,23 @@ public class TicketService {
                     reversDirection(ticket.getTicketDirection()),
                     ticketSum);
         }
+    }
+
+    @Transactional
+    public void removeOperationOfTicket(Long operationId) {
+        log.info("удаление операции [{}] чека", operationId);
+        var operation = operationService.getOperationById(operationId);
+        var ticketId = operation.getTicketId();
+        var ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new ProcessException("Чек не найден"));
+        checkAccess(ticket.getAccountId());
+
+        var ticketDirection = ticket.getTicketDirection();
+        var operationSum = operation.getSum();
+        changeCurrentSum(ticket.getAccountId(),
+                reversDirection(ticketDirection),
+                operationSum);
+
+        operationService.deleteOperation(operationId);
     }
 
     private void changeCurrentSum(Long accountId,

@@ -140,6 +140,24 @@
                           <q-item clickable
                                   v-for="(itemOperation, indexOperation) in itemTicket.operations"
                                   :key="indexOperation">
+                            <q-menu auto-close>
+                              <q-list style="min-width: 100px">
+                                <q-item clickable>
+                                  <q-item-section avatar>
+                                    <q-icon name="edit"/>
+                                  </q-item-section>
+                                  <q-item-section>
+                                    Редактировать
+                                  </q-item-section>
+                                </q-item>
+                                <q-item clickable @click="viewDeleteOperationMethod(itemOperation)">
+                                  <q-item-section avatar>
+                                    <q-icon name="delete_outline"/>
+                                  </q-item-section>
+                                  <q-item-section>Удалить</q-item-section>
+                                </q-item>
+                              </q-list>
+                            </q-menu>
                             <q-item-section>
                               <q-item-label>{{ itemOperation.name }}</q-item-label>
                               <q-item-label caption v-if="itemOperation.comment">
@@ -184,6 +202,24 @@
       </div>
     </div>
 
+    <q-dialog v-model="deleteOperationView" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="delete_outline" color="primary" text-color="white"/>
+          <span
+            class="q-ml-sm">Удалить операция "{{
+              currentOperation.name
+            }}" на сумму {{ formattedNumber(currentOperation.sum) }}?
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Отмена" color="primary" v-close-popup/>
+          <q-btn flat label="Удалить" color="primary" v-close-popup @click="deleteOperationMethod"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </q-page>
 </template>
 
@@ -218,11 +254,35 @@ export default defineComponent({
     const filterStartDate = ref(startDate);
     const filterEndDate = ref(endDate);
 
+    const currentOperation = ref({
+      sum: 0,
+      name: '',
+      comment: '',
+      category: {}
+    } as Operation);
+    const deleteOperationView = ref(false);
+
+    const updateViewMethod = () => {
+      storeAccount.loadAccountById(props.accountId)
+      storeTicket.actionLoadTicketsByFilter(props.accountId,
+        filterStartDate.value,
+        filterEndDate.value,
+        filterName.value)
+    }
     const findTicketsMethod = () => {
       storeTicket.actionLoadTicketsByFilter(props.accountId,
         filterStartDate.value,
         filterEndDate.value,
         filterName.value)
+    }
+    const viewDeleteOperationMethod = (operation: Operation) => {
+      currentOperation.value = operation;
+      deleteOperationView.value = true;
+    }
+    const deleteOperationMethod = () => {
+      if (currentOperation.value.id)
+        storeTicket.actionDeleteOperation(currentOperation.value.id);
+      updateViewMethod();
     }
 
     return {
@@ -235,8 +295,13 @@ export default defineComponent({
       filterEndDate,
       windowWidth,
       windowHeight,
+      currentOperation,
+      deleteOperationView,
       //methods
+      updateViewMethod,
       findTicketsMethod,
+      viewDeleteOperationMethod,
+      deleteOperationMethod
     }
   },
   methods: {
