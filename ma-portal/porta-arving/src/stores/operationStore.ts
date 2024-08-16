@@ -39,6 +39,9 @@ export const useOperationStore = defineStore('operation', {
           })
         })
     },
+    actionClearLikedGroups() {
+      this.likedGroups = new Array<string>();
+    },
     actionFindLastOperationByNameAndFill(operationName: string, accountId: number, operation: Operation) {
       api.get('/api/service/operation/findLastOperationByName',
         {

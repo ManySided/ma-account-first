@@ -7,37 +7,10 @@
         v-model="operationVariable.name"
         hide-bottom-space
         :error="!isValidName"
-        error-message="Не заполнено поле название операции">
+        error-message="Не заполнено поле название операции"
+        @keydown.enter.prevent="searchAndShowVariants"
+      >
         <template v-slot:append>
-          <q-icon name="manage_search" class="cursor-pointer">
-            <q-popup-proxy cover ref="popup-proxy">
-              <div style="width: 400px; height: 300px; padding: 5px">
-                <q-input ref="filterRef" outlined v-model="filterRow" label="Фильтр" @keyup.enter="findLikeOperations">
-                  <template v-slot:append>
-                    <q-icon v-if="filterRow.length>0" name="search" class="cursor-pointer" @click="findLikeOperations"/>
-                    <q-icon v-if="filterRow!==''" name="clear" class="cursor-pointer" @click="clearOperationFilter"/>
-                  </template>
-                </q-input>
-                <div style="padding-bottom: 5px">
-                  <p
-                    align="center"
-                    v-if="!operationStore.getLikedGroups.length">
-                    Список подходящих операций
-                  </p>
-                </div>
-                <q-list v-if="Array.isArray(operationStore.getLikedGroups) && operationStore.getLikedGroups.length"
-                        bordered separator>
-                  <q-item clickable v-ripple v-for="(itemOperation, indexOperation) in operationStore.getLikedGroups"
-                          :key="indexOperation">
-                    <q-item-section @click="getOperationByName(itemOperation)">
-                      <!--@click.once="$refs['popup-proxy'].hide()"-->
-                      {{ itemOperation }}
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-            </q-popup-proxy>
-          </q-icon>
           <q-icon name="chat_bubble_outline" class="cursor-pointer" @click="changeShowComment"/>
           <q-icon name="shopping_cart" class="cursor-pointer" @click="changeShowPurchaseEdit"/>
         </template>
@@ -73,6 +46,20 @@
   <div class="row" v-if="showPurchaseEdit">
     <p align="center"><i>тут будет редактирование товара</i></p>
   </div>
+
+  <q-dialog v-model="showSearchLikedGroups">
+    <div class="row">
+      <q-list separator class="bg-blue-grey-3 text-black shadow-2">
+        <q-item
+          clickable
+          v-for="(itemOperation, indexOperation) in operationStore.getLikedGroups" :key="indexOperation"
+          @click="getOperationByName(itemOperation)"
+        >
+          {{ itemOperation }}
+        </q-item>
+      </q-list>
+    </div>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -98,10 +85,9 @@ const operationVariable = defineModel<Operation>('operationVariable', {
 const operationStore = useOperationStore();
 
 // variables
-const filterRow = ref('')
-const filterRef = ref(null)
 const showComment = ref(false);
 const showPurchaseEdit = ref(false);
+const showSearchLikedGroups = ref(false);
 
 // methods
 const changeShowComment = () => {
@@ -110,16 +96,15 @@ const changeShowComment = () => {
 const changeShowPurchaseEdit = () => {
   showPurchaseEdit.value = !showPurchaseEdit.value
 }
-const clearOperationFilter = () => {
-  filterRow.value = ''
-}
-const findLikeOperations = () => {
-  operationStore.actionFindLikedGroups(filterRow.value, props.accountId);
-}
 const getOperationByName = (selectedName: string) => {
   if (operationVariable.value) {
     operationStore.actionFindLastOperationByNameAndFill(selectedName, props.accountId, operationVariable.value)
   }
+  showSearchLikedGroups.value = false;
+}
+const searchAndShowVariants = () => {
+  operationStore.actionFindLikedGroups(operationVariable.value.name, props.accountId);
+  showSearchLikedGroups.value = true;
 }
 // validate
 const isValidName = computed(() => {
