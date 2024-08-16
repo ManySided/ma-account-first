@@ -87,6 +87,7 @@ public class ImportDataService {
                 operation.setIsActive(Boolean.TRUE);
                 operation.setCategory(getCategory(accountId, categoryName));
                 operation.setName(operationName);
+                operation.setImportFlag(Boolean.TRUE);
                 if (nonNull(sumMinus)) {
                     operation.setSum(convertNumber(sumMinus));
                     minus.add(operation);

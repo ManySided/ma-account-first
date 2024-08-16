@@ -42,4 +42,7 @@ public class Operation {
 
     @Column(name = "is_stuff_only")
     private Boolean stuffFlag;
+
+    @Column(name = "import_flag")
+    private Boolean importFlag;
 }

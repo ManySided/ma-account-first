@@ -1,9 +1,9 @@
 <template>
   <q-page>
-    <div class="row">
+    <div class="row justify-center">
       <div class="column" v-for="(item, index) in storeAccount.getActualAccounts" :key="index" style="padding: 10px">
         <q-card class="my-card">
-          <q-card-section>
+          <q-card-section style="color: #373783; background-color: #fafafa">
             <div class="text-h6">{{ item.name }}</div>
             <div class="text-subtitle2">{{ formattedNumber(item.currentSum) }}
               <q-icon :name="item.currency.symbol"/>
@@ -14,7 +14,7 @@
 
           <q-card-actions vertical>
             <q-btn flat @click="$router.push({name:'tickets', params: {accountId: item.id}})">
-              Опреации
+              Операции
             </q-btn>
           </q-card-actions>
         </q-card>
@@ -52,6 +52,5 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .my-card
-  width: 100%
-  max-width: 250px
+  width: 500px
 </style>

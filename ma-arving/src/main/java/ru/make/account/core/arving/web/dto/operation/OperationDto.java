@@ -25,4 +25,5 @@ public class OperationDto {
     private Long ticketId;
     private Boolean isActive;
     private Boolean stuffFlag;
+    private Boolean importFlag;
 }

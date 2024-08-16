@@ -1,43 +1,43 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+    <q-header elevated style="background-color: #292961">
+      <q-toolbar class="q-py-sm q-px-md">
         <q-toolbar-title>
-          <q-btn color="purple" label="Меню">
+          <q-btn color="white" icon="menu" flat>
             <q-menu>
               <q-list dense style="min-width: 100px">
                 <q-item clickable v-close-popup>
-                  <q-item-section @click="$router.push('account/')">Счета</q-item-section>
+                  <q-item-section @click="$router.push({name: 'account'})">Счета</q-item-section>
                 </q-item>
-                <q-item clickable>
-                  <q-item-section>Операции</q-item-section>
-                  <q-item-section side>
-                    <q-icon name="keyboard_arrow_right"/>
-                  </q-item-section>
-
-                  <q-menu anchor="top end" self="top start">
-                    <q-list>
-                      <q-item
-                        v-for="(item, index) in storeAccount.getActualAccounts" :key="index"
-                        dense
-                        clickable
-                      >
-                        <q-item-section
-                          @click="$router.push({name:'tickets', params: {accountId: getTicketsLink(item)}})">
-                          {{ item.name }}
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-menu>
-
+                <q-item clickable v-close-popup>
+                  <q-item-section @click="$router.push({name: 'tickets'})">Операции</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
                   <q-item-section>Долги</q-item-section>
                 </q-item>
+                <q-separator></q-separator>
+                <q-item clickable v-close-popup>
+                  <q-item-section @click="$router.push({name: 'importCsv'})">Импорт</q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>
+          <q-avatar square>
+            <q-img src="~assets/logo.png"></q-img>
+          </q-avatar>
+          <b>Arving</b>
         </q-toolbar-title>
+        <q-spinner color="orange" size="3em" v-if="storeStuff.isShowLoadState"/>
+        <div class="title-page">{{ storeStuff.titlePage }}</div>
+        <q-space/>
+        <q-item clickable>
+          <q-item-section @click="$router.push({name: 'dashboard'})">
+            <q-item-label>{{ storeStuff.getAccountName }}</q-item-label>
+            <q-item-label caption class="text-white">{{ storeStuff.getAccountCurrentSum }}
+              {{ storeStuff.getAccountCurrencyShortName }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
       </q-toolbar>
     </q-header>
 
@@ -48,18 +48,23 @@
 </template>
 
 <script setup lang="ts">
-import {useAccountStore} from 'stores/accountStore';
-import Account from 'src/model/dto/AccountDto';
+import {useStuffStore} from 'stores/stuffStore';
 
-const storeAccount = useAccountStore();
-storeAccount.loadAccounts();
+const props = defineProps({accountId: Number});
 
-const getTicketsLink = (item: Account) => {
-  return item.id;
-};
+const storeStuff = useStuffStore();
+
+storeStuff.actionSetAccountId(props.accountId ?? 0);
+storeStuff.actionUpdateAccountData();
 
 defineOptions({
-  name: 'MainLayout',
+  name: 'MainLayout'
 });
 
 </script>
+
+<style lang="sass" scoped>
+.title-page
+  text-transform: uppercase
+  font-size: 26px
+</style>

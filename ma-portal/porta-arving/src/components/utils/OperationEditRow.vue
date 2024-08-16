@@ -97,8 +97,6 @@ const operationVariable = defineModel<Operation>('operationVariable', {
 // store
 const operationStore = useOperationStore();
 
-console.log(operationStore.getLikedGroups.values)
-
 // variables
 const filterRow = ref('')
 const filterRef = ref(null)

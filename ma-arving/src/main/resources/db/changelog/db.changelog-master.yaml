@@ -32,3 +32,6 @@ databaseChangeLog:
   - include:
       file: db.changelog-11-transfer.sql
       relativeToChangelogFile: true
+  - include:
+      file: db.changelog-12-operation-import-flag.sql
+      relativeToChangelogFile: true

@@ -2,54 +2,10 @@
   <q-page>
     <div class="q-pa-md example-row-equal-width">
       <div class="row">
+
+      </div>
+      <div class="row">
         <div class="col-md-3">
-          <!-- Блок информации об счёте -->
-          <div class="row-md-3" style="padding-bottom: 5px">
-            <q-card class="my-card" flat bordered>
-              <q-card-section style="background-color: #f2f2f2">
-                <div class="text-h6">информация</div>
-              </q-card-section>
-              <q-separator/>
-
-              <q-list>
-                <q-item>
-                  <q-item-section>
-                    <q-item
-                      clickable
-                      v-ripple
-                      style="border: 1px solid #c2c2c2"
-                      class="rounded-borders bg-grey-2"
-                    >
-                      <q-item-section>
-                        <q-item-label style="color: #a4a4a4; font-size: 12px">
-                          счёт
-                        </q-item-label>
-                        {{ storeAccount.getCurrentAccountName }}
-                      </q-item-section>
-                    </q-item>
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>
-                    <q-item
-                      clickable
-                      v-ripple
-                      style="border: 1px solid #c2c2c2"
-                      class="rounded-borders bg-grey-2"
-                    >
-                      <q-item-section>
-                        <q-item-label style="color: #a4a4a4; font-size: 12px">
-                          сумма
-                        </q-item-label>
-                        {{ formattedNumber(storeAccount.getCurrentAccountSum) }}
-                      </q-item-section>
-                    </q-item>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-card>
-          </div>
-
           <!-- Фильтр по операциям -->
           <div class="row-md-3">
             <q-card class="my-card" flat bordered>
@@ -98,13 +54,11 @@
                 </div>
 
                 <div class="col-auto">
-                  <q-btn round color="primary"
+                  <q-btn color="primary"
                          icon="add"
                          size="10px"
-                         @click="$router.push({name:'ticketEdit', params: {accountId: accountId}})">
-                    <q-tooltip>
-                      Добавить новый чек
-                    </q-tooltip>
+                         @click="$router.push({name:'ticketEdit'})">
+                    Добавить новый чек
                   </q-btn>
                 </div>
               </div>
@@ -230,25 +184,29 @@ import {date} from 'quasar';
 import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import {useTicketStore} from 'stores/ticketStore';
 import {Operation, TicketList} from 'src/model/dto/TicketDto';
+import {useStuffStore} from 'stores/stuffStore';
 
 export default defineComponent({
   name: 'TicketListPage',
   components: {CustomFieldDate},
-  props: ['accountId'],
-  setup(props) {
+
+  setup() {
     // init
     const windowWidth = ref(window.innerWidth)
     const windowHeight = ref(window.innerHeight)
 
+    const storeStuff = useStuffStore();
     const storeAccount = useAccountStore();
     const storeTicket = useTicketStore();
 
-    const startDate = (date.formatDate(date.startOfDate(new Date(), 'month'), 'YYYY-MM-DD'));
-    const endDate = (date.formatDate(date.endOfDate(new Date(), 'month'), 'YYYY-MM-DD'));
+    const startDate = (date.formatDate(storeStuff.getTicketsFilterPeriodFrom, 'YYYY-MM-DD'));
+    const endDate = (date.formatDate(storeStuff.getTicketsFilterPeriodTo, 'YYYY-MM-DD'));
 
     // load data
-    storeAccount.loadAccountById(props.accountId)
-    storeTicket.actionLoadTicketsByFilter(props.accountId, startDate, endDate)
+    storeStuff.actionUpdateTitlePage('Просмотр чеков');
+    storeStuff.actionUpdateAccountData();
+    storeAccount.loadAccountById(storeStuff.getAccountId)
+    storeTicket.actionLoadTicketsByFilter(storeStuff.getAccountId, startDate, endDate)
 
     const filterName = ref('');
     const filterStartDate = ref(startDate);
@@ -262,15 +220,12 @@ export default defineComponent({
     } as Operation);
     const deleteOperationView = ref(false);
 
-    const updateViewMethod = () => {
-      storeAccount.loadAccountById(props.accountId)
-      storeTicket.actionLoadTicketsByFilter(props.accountId,
-        filterStartDate.value,
-        filterEndDate.value,
-        filterName.value)
-    }
     const findTicketsMethod = () => {
-      storeTicket.actionLoadTicketsByFilter(props.accountId,
+      storeStuff.actionUpdateTicketsFilterPeriodFrom(
+        date.extractDate(filterStartDate.value, 'YYYY-MM-DD'));
+      storeStuff.actionUpdateTicketsFilterPeriodTo(
+        date.extractDate(filterEndDate.value, 'YYYY-MM-DD'));
+      storeTicket.actionLoadTicketsByFilter(storeStuff.getAccountId,
         filterStartDate.value,
         filterEndDate.value,
         filterName.value)
@@ -281,8 +236,12 @@ export default defineComponent({
     }
     const deleteOperationMethod = () => {
       if (currentOperation.value.id)
-        storeTicket.actionDeleteOperation(currentOperation.value.id);
-      updateViewMethod();
+        storeTicket.actionDeleteOperation(
+          currentOperation.value.id,
+          () => {
+            storeStuff.actionUpdateAccountData();
+            findTicketsMethod();
+          });
     }
 
     return {
@@ -298,7 +257,6 @@ export default defineComponent({
       currentOperation,
       deleteOperationView,
       //methods
-      updateViewMethod,
       findTicketsMethod,
       viewDeleteOperationMethod,
       deleteOperationMethod

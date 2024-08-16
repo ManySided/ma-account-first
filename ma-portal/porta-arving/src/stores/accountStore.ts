@@ -26,6 +26,9 @@ export const useAccountStore = defineStore('account', {
           return 0
         });
     },
+    getCurrentAccount(state): Account {
+      return state.currentAccount;
+    },
     getCurrentAccountName(state) {
       return state.currentAccount.name;
     },
@@ -35,9 +38,11 @@ export const useAccountStore = defineStore('account', {
   },
 
   actions: {
-    loadAccountById(id: number) {
+    loadAccountById(id: number, callback?: any) {
       api.get('/api/service/account/getAccountById', {params: {request: id}}).then((response) => {
         this.currentAccount = response.data
+        if (callback)
+          callback(response.data)
       })
         .catch((error) => {
           Notify.create({

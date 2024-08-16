@@ -2,36 +2,15 @@
   <q-page>
     <div class="q-pa-md q-gutter-sm">
       <div class="row">
-        <div class="col-2">
-          <!-- информация о счёте -->
-          <q-card flat bordered>
-            <q-card-section class="q-pt-xs">
-              <div class="text-overline">Счёт</div>
-            </q-card-section>
-            <div style="padding-left: 5px; padding-right: 5px; padding-bottom: 5px;">
-              <q-input outlined
-                       label="Название"
-                       v-model="storeAccount.getCurrentAccountName"
-                       hide-bottom-space readonly/>
-            </div>
-            <div style="padding-left: 5px; padding-right: 5px; padding-bottom: 5px;">
-              <q-input outlined
-                       label="Текущая сумма"
-                       v-model="storeAccount.getCurrentAccountSum"
-                       type="number" hide-bottom-space readonly/>
-            </div>
-            <q-separator/>
-            <q-card-actions>
-              <q-btn flat color="primary" style="width: 100%" @click="leavePage">Вернуться</q-btn>
-            </q-card-actions>
-          </q-card>
-        </div>
-        <div class="col-10" style="padding-left: 5px">
+        <div class="col-12" style="padding-left: 5px">
           <!-- ввод данных чека -->
           <q-card flat bordered>
             <q-card-section class="q-pt-xs">
               <!-- Секция чека -->
-              <div class="text-overline">Редактирование чека</div>
+              <q-btn flat color="primary" @click="leavePage">
+                <q-icon left name="arrow_back"/>
+                Вернуться
+              </q-btn>
             </q-card-section>
             <div class="row" style="padding-left: 5px; padding-right: 5px; padding-bottom: 5px;">
               <div class="col-2" style="padding-right: 5px">
@@ -93,7 +72,7 @@
                     <q-item-section>
                       <operation-edit-row
                         v-model:operationVariable="thisTicket.operations[indexOperation]"
-                        :account-id="accountId"
+                        :account-id="storeStuff.getAccountId"
                         @change-sum="refreshTotalSum"
                       />
                     </q-item-section>
@@ -122,22 +101,25 @@ import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import OperationEditRow from 'components/utils/OperationEditRow.vue';
 import {date, Notify} from 'quasar';
 import Ticket, {isValidTicket, ticketDirection} from 'src/model/dto/TicketDto';
-import {useAccountStore} from 'stores/accountStore';
 import {useTicketStore} from 'stores/ticketStore';
 import {useRouter} from 'vue-router';
+import {useStuffStore} from 'stores/stuffStore';
 
 export default defineComponent({
   name: 'TicketEditPage',
   components: {CustomFieldDate, OperationEditRow},
-  props: ['accountId'],
-  setup(props) {
+  setup() {
+    // store
+    const storeTicket = useTicketStore();
+    const storeStuff = useStuffStore();
     // init
+    storeStuff.actionUpdateTitlePage('Создание чека');
     const router = useRouter();
     const ticketOptions = ref(ticketDirection)
     const thisTicket = ref({
       ticketDirection: 'EXPENDITURE',
       date: date.formatDate(Date.now(), 'YYYY-MM-DD'),
-      accountId: props.accountId,
+      accountId: storeStuff.getAccountId,
       operations: [
         {
           sum: 0,
@@ -152,11 +134,6 @@ export default defineComponent({
 
     const windowWidth = ref(window.innerWidth)
     const windowHeight = ref(window.innerHeight)
-    // store
-    const storeAccount = useAccountStore();
-    const storeTicket = useTicketStore();
-    // load data
-    storeAccount.loadAccountById(props.accountId)
     // methods
     const formattedNumber = (n: number) => {
       if (n)
@@ -196,7 +173,6 @@ export default defineComponent({
         storeTicket.actionSaveTicket(thisTicket.value, () => {
           leavePage()
         })
-        leavePage()
       } else {
         Notify.create({
           color: 'negative',
@@ -207,12 +183,12 @@ export default defineComponent({
       }
     }
     const leavePage = () => {
-      router.push({name: 'tickets', params: {accountId: props.accountId}})
+      router.push({name: 'tickets'})
     }
 
     return {
       // store
-      storeAccount,
+      storeStuff,
       // variable
       scrollOperationRef,
       ticketOptions,

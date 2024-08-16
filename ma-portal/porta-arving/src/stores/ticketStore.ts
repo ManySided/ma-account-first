@@ -18,14 +18,13 @@ export const useTicketStore = defineStore('ticket', {
     actionSaveTicket(ticket: Ticket, callback: any) {
       api.post('/api/service/ticket', ticket)
         .then(() => {
+          callback()
           Notify.create({
             color: 'primary',
             position: 'top',
             message: 'Чек сохранён успешно',
             icon: 'check_circle_outline'
           })
-          if (callback)
-            callback()
         })
         .catch((error) => {
           Notify.create({
@@ -41,7 +40,7 @@ export const useTicketStore = defineStore('ticket', {
                               to: string,
                               name?: string,
                               categories?: Category[],
-                              directions?: number[]
+                              directions?: number[],
     ) {
       api.post('/api/service/ticket/filter',
         {
@@ -51,9 +50,10 @@ export const useTicketStore = defineStore('ticket', {
           name: name,
           categories: categories,
           directions: directions
-        }).then((response) => {
-        this.ticketsOfDay = response.data
-      })
+        })
+        .then((response) => {
+          this.ticketsOfDay = response.data
+        })
         .catch((error) => {
           Notify.create({
             color: 'negative',
@@ -63,10 +63,11 @@ export const useTicketStore = defineStore('ticket', {
           })
         })
     },
-    actionDeleteOperation(operationId: number) {
+    actionDeleteOperation(operationId: number, callback: any) {
       const params = {operationId: operationId};
       api.delete('/api/service/ticket/operation', {params})
-        .then((response) => {
+        .then(() => {
+          callback()
           Notify.create({
             color: 'positive',
             position: 'top',

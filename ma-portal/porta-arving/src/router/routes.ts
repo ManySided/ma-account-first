@@ -6,29 +6,35 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
+        name: 'dashboard',
         path: '/', component: () => import('pages/DashboardPage.vue'),
       }
     ]
   },
   {
-    path: '/workspace',
+    path: '/workspace/:accountId',
     component: () => import('layouts/WorkspaceLayout.vue'),
+    props: true,
     children: [
       {
         name: 'account',
         path: 'account', component: () => import('pages/account/AccountPage.vue'),
       },
       {
-        path: 'tickets/:accountId',
+        path: 'tickets',
         name: 'tickets',
         component: () => import('pages/ticket/TicketListPage.vue'),
-        props: true,
+
       },
       {
-        path: 'ticket/:accountId/edit',
+        path: 'ticket/edit',
         name: 'ticketEdit',
         component: () => import('pages/ticket/TicketEditPage.vue'),
-        props: true,
+      },
+      {
+        path: 'import/csv',
+        name: 'importCsv',
+        component: () => import('pages/upload/ImportCsvPage.vue'),
       }
     ]
   },
