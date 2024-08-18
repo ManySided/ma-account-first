@@ -96,7 +96,7 @@
                                   :key="indexOperation">
                             <q-menu auto-close>
                               <q-list style="min-width: 100px">
-                                <q-item clickable>
+                                <q-item clickable @click="viewEditOperationMethod(itemOperation)">
                                   <q-item-section avatar>
                                     <q-icon name="edit"/>
                                   </q-item-section>
@@ -156,20 +156,50 @@
       </div>
     </div>
 
-    <q-dialog v-model="deleteOperationView" persistent>
+    <q-dialog v-model="deleteOperationView" persistent backdrop-filter="blur(4px)">
       <q-card>
-        <q-card-section class="row items-center">
-          <q-avatar icon="delete_outline" color="primary" text-color="white"/>
-          <span
-            class="q-ml-sm">Удалить операция "{{
-              currentOperation.name
-            }}" на сумму {{ formattedNumber(currentOperation.sum) }}?
-          </span>
+        <q-bar>
+          <div>Удаление операции</div>
+          <q-space/>
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-card-section>
+          Удалить операция "{{ currentOperation.name }}" на сумму {{ formattedNumber(currentOperation.sum) }}?
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Отмена" color="primary" v-close-popup/>
-          <q-btn flat label="Удалить" color="primary" v-close-popup @click="deleteOperationMethod"/>
+          <q-btn flat label="Отмена" v-close-popup/>
+          <q-btn flat label="Удалить" v-close-popup @click="deleteOperationMethod"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog
+      v-model="editOperationView"
+      persistent
+      backdrop-filter="blur(4px)"
+      full-width>
+      <q-card>
+        <q-bar>
+          <div>Редактирование операции</div>
+          <q-space/>
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-card-section>
+          <operation-edit-row
+            v-model:operationVariable="currentOperation"
+            :account-id="storeStuff.getAccountId"
+            @change-sum="refreshTotalSumMethod"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Отмена" v-close-popup/>
+          <q-btn flat label="Сохранить" v-close-popup @click="saveOperationMethod"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -180,15 +210,16 @@
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import {useAccountStore} from 'stores/accountStore';
-import {date} from 'quasar';
-import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import {useTicketStore} from 'stores/ticketStore';
-import {Operation, TicketList} from 'src/model/dto/TicketDto';
 import {useStuffStore} from 'stores/stuffStore';
+import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
+import OperationEditRow from 'components/utils/OperationEditRow.vue';
+import {isValidOperation, Operation, TicketList} from 'src/model/dto/TicketDto';
+import {date} from 'quasar';
 
 export default defineComponent({
   name: 'TicketListPage',
-  components: {CustomFieldDate},
+  components: {CustomFieldDate, OperationEditRow},
 
   setup() {
     // init
@@ -219,6 +250,7 @@ export default defineComponent({
       category: {}
     } as Operation);
     const deleteOperationView = ref(false);
+    const editOperationView = ref(false);
 
     const findTicketsMethod = () => {
       storeStuff.actionUpdateTicketsFilterPeriodFrom(
@@ -244,10 +276,27 @@ export default defineComponent({
           });
     }
 
+    const refreshTotalSumMethod = () => {
+      console.log("сумма введена")
+    }
+    const viewEditOperationMethod = (operation: Operation) => {
+      currentOperation.value = operation;
+      editOperationView.value = true;
+    }
+    const saveOperationMethod = () => {
+      if (currentOperation.value && isValidOperation(currentOperation.value)) {
+        const callback = () => {
+          findTicketsMethod()
+        }
+        storeTicket.actionUpdateOperation(currentOperation.value, callback);
+      }
+    }
+
     return {
       // init
       storeAccount,
       storeTicket,
+      storeStuff,
       // variable
       filterName,
       filterStartDate,
@@ -256,10 +305,14 @@ export default defineComponent({
       windowHeight,
       currentOperation,
       deleteOperationView,
+      editOperationView,
       //methods
       findTicketsMethod,
       viewDeleteOperationMethod,
-      deleteOperationMethod
+      deleteOperationMethod,
+      viewEditOperationMethod,
+      refreshTotalSumMethod,
+      saveOperationMethod
     }
   },
   methods: {

@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import Ticket, {Category, TicketList} from 'src/model/dto/TicketDto';
+import Ticket, {Category, Operation, TicketList} from 'src/model/dto/TicketDto';
 import {api} from 'boot/axios';
 import {Notify} from 'quasar';
 
@@ -73,6 +73,27 @@ export const useTicketStore = defineStore('ticket', {
             position: 'top',
             message: 'Операция удалёна',
             icon: 'done'
+          })
+        })
+        .catch((error) => {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.message,
+            icon: 'report_problem'
+          })
+        })
+    },
+    actionUpdateOperation(operation: Operation, callback?: any) {
+      api.put('/api/service/ticket/operation', operation)
+        .then(() => {
+          if (callback)
+            callback()
+          Notify.create({
+            color: 'primary',
+            position: 'top',
+            message: 'Операция обновлена успешно',
+            icon: 'check_circle_outline'
           })
         })
         .catch((error) => {

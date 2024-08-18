@@ -19,7 +19,7 @@ export default boot(({app /* , store } */}) => {
 
   return new Promise(resolve => {
     const keycloak = new Keycloak({
-      url: 'http://localhost:8180/',
+      url: 'http://localhost:8180/', // http://keycloak:8080/
       realm: 'ma_account',
       clientId: 'account-key'
     })

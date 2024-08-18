@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.make.account.core.arving.service.TicketService;
+import ru.make.account.core.arving.web.dto.operation.OperationDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketFilterDto;
 
@@ -30,5 +31,10 @@ public class TicketController {
     public ResponseEntity<?> removeOperation(@RequestParam Long operationId) {
         ticketService.removeOperationOfTicket(operationId);
         return ResponseEntity.ok(HttpEntity.EMPTY);
+    }
+
+    @PutMapping("/operation")
+    public ResponseEntity<?> updateOperation(@RequestBody OperationDto request) {
+        return ResponseEntity.ok(ticketService.updateOperationOfTicket(request));
     }
 }

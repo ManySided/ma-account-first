@@ -39,7 +39,7 @@ export const ticketDirection = [
   {value: 'INCOME', label: 'Доход'}
 ]
 
-const isValidOperation = (o: Operation) => {
+export const isValidOperation = (o: Operation) => {
   if (o) {
     const isValidName = o.name && o.name.length > 0
     const isValidCategory = o.category && o.category.id && o.category.id > 0

@@ -2,7 +2,7 @@ import {boot} from 'quasar/wrappers'
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8091',
+  baseURL: 'http://localhost:8091', // 'http://back:8091',
   // withCredentials: true
 })
 
