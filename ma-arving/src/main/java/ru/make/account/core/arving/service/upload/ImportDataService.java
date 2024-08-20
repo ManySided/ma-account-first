@@ -3,6 +3,7 @@ package ru.make.account.core.arving.service.upload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.model.TicketDirectionEnum;
 import ru.make.account.core.arving.security.SecurityHandler;
@@ -35,6 +36,7 @@ public class ImportDataService {
     private final TicketService ticketService;
     private final AccountService accountService;
 
+    @Transactional
     public Boolean importData(Long accountId, InputStream stream) {
         try (InputStreamReader streamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
              var bufferedReader = new BufferedReader(streamReader)) {
