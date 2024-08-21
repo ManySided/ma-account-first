@@ -24,4 +24,6 @@ public class Category {
     private Long accountId;
     @Column(name = "is_kategoria_slugebnaa")
     private Boolean stuffFlag;
+    @Column(name = "flag_activity")
+    private Boolean flagActivity;
 }

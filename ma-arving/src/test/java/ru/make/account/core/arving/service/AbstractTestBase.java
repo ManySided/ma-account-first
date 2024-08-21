@@ -70,6 +70,19 @@ public class AbstractTestBase {
         );
     }
 
+    public Long getAccountId(final String accountName) {
+        return mapAccount2Id.computeIfAbsent(accountName, s ->
+                accountService.createAccount(AccountDto.builder()
+                        .name(accountName)
+                        .comment(accountName + " comment")
+                        .currency(CurrencyDto.builder()
+                                .id(getCurrencyRubId())
+                                .build())
+                        .startSum(BigDecimal.valueOf(10000))
+                        .build())
+        );
+    }
+
     public AccountDto getAccount() {
         return accountService.getAccount(getAccountId());
     }
@@ -80,6 +93,7 @@ public class AbstractTestBase {
                     category.setAccountId(getAccountId());
                     category.setName(CATEGORY_PRODUCTS);
                     category.setStuffFlag(Boolean.FALSE);
+                    category.setFlagActivity(Boolean.TRUE);
                     return categoryRepository.save(category).getId();
                 }
         );
@@ -91,6 +105,7 @@ public class AbstractTestBase {
                     category.setAccountId(getAccountId());
                     category.setName(CATEGORY_TRANSPORT);
                     category.setStuffFlag(Boolean.FALSE);
+                    category.setFlagActivity(Boolean.TRUE);
                     return categoryRepository.save(category).getId();
                 }
         );
@@ -102,6 +117,7 @@ public class AbstractTestBase {
                     category.setAccountId(getAccountId());
                     category.setName(CATEGORY_OTHER);
                     category.setStuffFlag(Boolean.FALSE);
+                    category.setFlagActivity(Boolean.TRUE);
                     return categoryRepository.save(category).getId();
                 }
         );

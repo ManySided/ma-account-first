@@ -9,13 +9,13 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findById(Long id);
+    Optional<Category> findByIdAndFlagActivityTrue(Long id);
 
-    List<Category> findByAccountIdAndParentIsNullOrderByName(Long accountId);
+    List<Category> findByAccountIdAndParentIsNullAndFlagActivityTrueOrderByName(Long accountId);
 
-    List<Category> findByAccountIdOrderByName(Long accountId);
+    List<Category> findByAccountIdAndFlagActivityTrueOrderByName(Long accountId);
 
-    List<Category> findByParentOrderByName(Long parent);
+    List<Category> findByParentAndFlagActivityTrueOrderByName(Long parent);
 
-    List<Category> findByAccountIdAndNameAndStuffFlagIsFalse(Long accountId, String name);
+    List<Category> findByAccountIdAndNameAndStuffFlagFalseAndFlagActivityTrue(Long accountId, String name);
 }
