@@ -43,10 +43,13 @@ public class AccountService {
     @Transactional
     public Long updateAccount(AccountDto request) {
         log.info("обновление счёта [{}]", request.getId());
+        var oldAccount = accountRepository.findById(request.getId())
+                .orElseThrow(() -> new ProcessException("Счёт не найден"));
         checkAccessToAccount(request.getId());
         log.info("> проверка безопасности пройдена");
         // TODO можно ли изменять текущую сумму, если уже есть операции
         var updateAccount = accountMapper.toEntity(request);
+        updateAccount.setAccountCreator(oldAccount.getAccountCreator());
         var response = accountRepository.save(updateAccount);
         log.info("обновлён счёт [{}]", response.getId());
         return response.getId();

@@ -66,14 +66,17 @@ export const useAccountStore = defineStore('account', {
           })
         })
     },
-    saveAccount(item: Account) {
+    saveAccount(item: Account, callback?: any) {
       if (item.id) {
-        api.post('/api/service/account', {item})
+        api.put('/api/service/account', item)
           .then(() => {
+            if (callback)
+              callback()
+
             Notify.create({
               color: 'positive',
               position: 'top',
-              message: 'Счёт создан',
+              message: 'Счёт обновлён',
               icon: 'done'
             })
           })
@@ -86,13 +89,17 @@ export const useAccountStore = defineStore('account', {
             })
             console.log(error)
           })
+
       } else {
-        api.put('/api/service/account', {item})
+        api.post('/api/service/account', item)
           .then(() => {
+            if (callback)
+              callback()
+            
             Notify.create({
               color: 'positive',
               position: 'top',
-              message: 'Счёт обновлён',
+              message: 'Счёт создан',
               icon: 'done'
             })
           })

@@ -20,6 +20,7 @@
                          :error="!isValidFieldStartSum"
                          error-message="Начальная сумма должна быть заполнена"
                          hide-bottom-space
+                         readonly
                          label="Начальная сумма"/>
                 <q-input outlined v-model="thisAccount.currentSum"
                          type="number"
