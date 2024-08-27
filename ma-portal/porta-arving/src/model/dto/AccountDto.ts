@@ -1,5 +1,5 @@
 import Currency from 'src/model/dto/DictionaryDto';
-import {date} from "quasar";
+import {date} from 'quasar';
 
 export default interface Account {
   id?: number

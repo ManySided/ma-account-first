@@ -2,6 +2,7 @@ import {defineStore} from 'pinia';
 import {api} from 'boot/axios';
 import {Notify} from 'quasar';
 import Account from 'src/model/dto/AccountDto';
+import {handleError} from 'src/common/ErrorHandler';
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
@@ -38,34 +39,22 @@ export const useAccountStore = defineStore('account', {
   },
 
   actions: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     loadAccountById(id: number, callback?: any) {
       api.get('/api/service/account/getAccountById', {params: {request: id}}).then((response) => {
         this.currentAccount = response.data
         if (callback)
           callback(response.data)
       })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
     loadAccounts() {
       api.get('/api/service/account/getAccounts').then((response) => {
         this.accounts = response.data
       })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     saveAccount(item: Account, callback?: any) {
       if (item.id) {
         api.put('/api/service/account', item)
@@ -80,22 +69,14 @@ export const useAccountStore = defineStore('account', {
               icon: 'done'
             })
           })
-          .catch((error) => {
-            Notify.create({
-              color: 'negative',
-              position: 'top',
-              message: error.message || error.errors,
-              icon: 'report_problem'
-            })
-            console.log(error)
-          })
+          .catch(handleError)
 
       } else {
         api.post('/api/service/account', item)
           .then(() => {
             if (callback)
               callback()
-            
+
             Notify.create({
               color: 'positive',
               position: 'top',
@@ -103,15 +84,7 @@ export const useAccountStore = defineStore('account', {
               icon: 'done'
             })
           })
-          .catch((error) => {
-            Notify.create({
-              color: 'negative',
-              position: 'top',
-              message: error.message || error.errors,
-              icon: 'report_problem'
-            })
-            console.log(error)
-          })
+          .catch(handleError)
       }
     },
     removeAccount(item: Account) {
@@ -125,14 +98,7 @@ export const useAccountStore = defineStore('account', {
             icon: 'done'
           })
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     }
   }
 });

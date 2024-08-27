@@ -10,7 +10,7 @@ import ru.make.account.core.arving.security.SecurityHandler;
 import ru.make.account.core.arving.service.AccountService;
 import ru.make.account.core.arving.service.CategoryService;
 import ru.make.account.core.arving.service.TicketService;
-import ru.make.account.core.arving.web.dto.operation.CategoryDto;
+import ru.make.account.core.arving.web.dto.category.CategoryDto;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 

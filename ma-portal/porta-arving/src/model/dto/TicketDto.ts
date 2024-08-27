@@ -12,6 +12,8 @@ export interface Category {
   id?: number
   name: string
   subCategories?: Category[]
+  parent?: number
+  accountId?: number
 }
 
 export interface Operation {
@@ -39,6 +41,12 @@ export const ticketDirection = [
   {value: 'INCOME', label: 'Доход'}
 ]
 
+// common
+export interface CategoryDeleteRequest {
+  categoryId: number
+  reserveCategoryId?: number
+}
+
 export const isValidOperation = (o: Operation) => {
   if (o) {
     const isValidName = o.name && o.name.length > 0
@@ -59,4 +67,11 @@ export const isValidTicket = (t: Ticket) => {
     return isValidTicketDirection && isValidDate && isValidOperations;
   }
   return false;
+}
+
+export function getClearCategory(): Category {
+  return {
+    name: '',
+    parent: undefined
+  } as Category
 }

@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import Currency from 'src/model/dto/DictionaryDto';
 import {api} from 'boot/axios';
-import {Notify} from 'quasar'
+import {handleError} from 'src/common/ErrorHandler';
 
 
 export const useDictionaryStore = defineStore('dictionary', {
@@ -20,15 +20,7 @@ export const useDictionaryStore = defineStore('dictionary', {
       api.get('/api/service/dict/currency/list').then((response) => {
         this.currency = response.data
       })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.errors,
-            icon: 'report_problem'
-          })
-          console.log(error)
-        })
+        .catch(handleError)
     }
   },
 

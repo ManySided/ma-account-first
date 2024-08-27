@@ -10,6 +10,9 @@
                   <q-item-section @click="$router.push({name: 'account'})">Счета</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
+                  <q-item-section @click="$router.push({name: 'category'})">Категории</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
                   <q-item-section @click="$router.push({name: 'tickets'})">Операции</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
