@@ -36,7 +36,6 @@ export default defineComponent({
     const importMethod = () => {
       if (fileModel.value)
         storeImport.importCsv(storeStuff.getAccountId, fileModel.value)
-      console.log("file:" + fileModel.value)
     };
     return {
       fileModel,

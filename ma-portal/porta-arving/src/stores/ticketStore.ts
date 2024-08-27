@@ -2,6 +2,7 @@ import {defineStore} from 'pinia';
 import Ticket, {Category, Operation, TicketList} from 'src/model/dto/TicketDto';
 import {api} from 'boot/axios';
 import {Notify} from 'quasar';
+import {handleError} from 'src/common/ErrorHandler';
 
 export const useTicketStore = defineStore('ticket', {
   state: () => ({
@@ -15,6 +16,7 @@ export const useTicketStore = defineStore('ticket', {
   },
 
   actions: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     actionSaveTicket(ticket: Ticket, callback: any) {
       api.post('/api/service/ticket', ticket)
         .then(() => {
@@ -26,14 +28,7 @@ export const useTicketStore = defineStore('ticket', {
             icon: 'check_circle_outline'
           })
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
     actionLoadTicketsByFilter(accountId: number,
                               from: string,
@@ -54,15 +49,9 @@ export const useTicketStore = defineStore('ticket', {
         .then((response) => {
           this.ticketsOfDay = response.data
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     actionDeleteOperation(operationId: number, callback: any) {
       const params = {operationId: operationId};
       api.delete('/api/service/ticket/operation', {params})
@@ -75,15 +64,9 @@ export const useTicketStore = defineStore('ticket', {
             icon: 'done'
           })
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     actionUpdateOperation(operation: Operation, callback?: any) {
       api.put('/api/service/ticket/operation', operation)
         .then(() => {
@@ -96,14 +79,7 @@ export const useTicketStore = defineStore('ticket', {
             icon: 'check_circle_outline'
           })
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     }
   }
 });

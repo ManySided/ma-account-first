@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia';
 import {api} from 'boot/axios';
 import {Notify} from 'quasar';
+import {handleError} from 'src/common/ErrorHandler';
 
 export const useImportStore = defineStore('importData', {
   state: () => ({
@@ -14,6 +15,7 @@ export const useImportStore = defineStore('importData', {
   },
 
   actions: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     importCsv(accountId: number, file: any) {
       const formData = new FormData();
       formData.append('file', file);
@@ -29,14 +31,7 @@ export const useImportStore = defineStore('importData', {
             icon: 'done'
           })
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     }
   }
 });

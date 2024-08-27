@@ -1,4 +1,4 @@
-package ru.make.account.core.arving.web.dto.operation;
+package ru.make.account.core.arving.web.dto.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

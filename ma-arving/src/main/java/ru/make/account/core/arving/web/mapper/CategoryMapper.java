@@ -2,7 +2,7 @@ package ru.make.account.core.arving.web.mapper;
 
 import org.mapstruct.Mapper;
 import ru.make.account.core.arving.model.Category;
-import ru.make.account.core.arving.web.dto.operation.CategoryDto;
+import ru.make.account.core.arving.web.dto.category.CategoryDto;
 
 @Mapper
 public interface CategoryMapper {

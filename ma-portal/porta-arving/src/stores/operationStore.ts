@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {api} from 'boot/axios';
-import {Notify} from 'quasar';
 import {Operation} from 'src/model/dto/TicketDto';
+import {handleError} from 'src/common/ErrorHandler';
 
 export const useOperationStore = defineStore('operation', {
   state: () => ({
@@ -30,14 +30,7 @@ export const useOperationStore = defineStore('operation', {
         .then((response) => {
           this.likedGroups = response.data
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     },
     actionClearLikedGroups() {
       this.likedGroups = new Array<string>();
@@ -55,14 +48,7 @@ export const useOperationStore = defineStore('operation', {
           operation.name = response.data.name
           operation.category = response.data.category
         })
-        .catch((error) => {
-          Notify.create({
-            color: 'negative',
-            position: 'top',
-            message: error.message,
-            icon: 'report_problem'
-          })
-        })
+        .catch(handleError)
     }
   }
 });

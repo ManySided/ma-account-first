@@ -8,7 +8,7 @@ import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.model.Category;
 import ru.make.account.core.arving.repository.CategoryRepository;
 import ru.make.account.core.arving.repository.OperationRepository;
-import ru.make.account.core.arving.web.dto.operation.CategoryDto;
+import ru.make.account.core.arving.web.dto.category.CategoryDto;
 import ru.make.account.core.arving.web.mapper.CategoryMapper;
 
 import java.util.List;
@@ -114,6 +114,8 @@ public class CategoryService {
             throw new ProcessException("Невозможно удалить категорию, т.к. на ней записаны операции, а резервной категории не указано");
 
         if (nonNull(reserveCategoryId)) {
+            if (categoryId.equals(reserveCategoryId))
+                throw new ProcessException("Удаляемая и резервная категория не могут быть одинаковыми");
             log.info("перенос операций с категории [{}] на замещающую категорию [{}]", categoryId, reserveCategoryId);
             var reserveCategory = categoryRepository.findById(reserveCategoryId)
                     .orElseThrow(() -> new ProcessException("замещающая категория не найдена"));

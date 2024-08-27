@@ -276,9 +276,8 @@ export default defineComponent({
           });
     }
 
-    const refreshTotalSumMethod = () => {
-      console.log("сумма введена")
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const refreshTotalSumMethod = () => {}
     const viewEditOperationMethod = (operation: Operation) => {
       currentOperation.value = operation;
       editOperationView.value = true;

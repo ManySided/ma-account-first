@@ -5,8 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.make.account.core.arving.service.CategoryService;
-import ru.make.account.core.arving.web.dto.category.DeleteCategoryDto;
-import ru.make.account.core.arving.web.dto.operation.CategoryDto;
+import ru.make.account.core.arving.web.dto.category.CategoryDto;
 
 import java.util.List;
 
@@ -28,13 +27,15 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveCategory(CategoryDto request) {
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto request) {
         return ResponseEntity.ok(categoryService.saveCategory(request));
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteCategory(DeleteCategoryDto request) {
-        categoryService.deleteCategory(request.getCategoryId(), request.getReserveCategoryId());
+    public ResponseEntity<?> deleteCategory(
+            @RequestParam Long categoryId,
+            @RequestParam(required = false) Long reserveCategoryId) {
+        categoryService.deleteCategory(categoryId, reserveCategoryId);
         return ResponseEntity.ok(HttpEntity.EMPTY);
     }
 

@@ -63,7 +63,7 @@ import {defineComponent, ref} from 'vue';
 import {useAccountStore} from 'stores/accountStore';
 import {createEmptyAccount, isValidAccount} from 'src/model/dto/AccountDto';
 import AccountModal from 'components/utils/AccountModal.vue';
-import {Notify} from "quasar";
+import {Notify} from 'quasar';
 
 export default defineComponent({
   name: 'DashboardPage',
