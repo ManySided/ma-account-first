@@ -18,4 +18,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByParentAndFlagActivityTrueOrderByName(Long parent);
 
     List<Category> findByAccountIdAndNameAndStuffFlagFalseAndFlagActivityTrue(Long accountId, String name);
+    List<Category> findByAccountIdAndNameAndFlagActivityTrue(Long accountId, String name);
 }

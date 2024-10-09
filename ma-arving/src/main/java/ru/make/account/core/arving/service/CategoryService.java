@@ -2,6 +2,7 @@ package ru.make.account.core.arving.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.make.account.core.arving.exception.ProcessException;
@@ -12,6 +13,8 @@ import ru.make.account.core.arving.web.dto.category.CategoryDto;
 import ru.make.account.core.arving.web.mapper.CategoryMapper;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -60,6 +63,34 @@ public class CategoryService {
         return upCategories;
     }
 
+    public List<CategoryDto> getCategoryTreeByAccountId(Long accountId, Boolean showRelevantCategory) {
+        accountService.checkAccessToAccount(accountId);
+        var upCategories = categoryRepository
+                .findByAccountIdAndParentIsNullAndFlagActivityTrueOrderByName(accountId)
+                .stream()
+                .map(categoryMapper::toDto)
+                .filter(relevantPredicate(showRelevantCategory))
+                .collect(Collectors.toList());
+        for (CategoryDto upCategory : upCategories) {
+            var subCategories = categoryRepository.findByParentAndFlagActivityTrueOrderByName(upCategory.getId())
+                    .stream()
+                    .map(categoryMapper::toDto)
+                    .filter(relevantPredicate(showRelevantCategory))
+                    .collect(Collectors.toList());
+            upCategory.setSubCategories(subCategories);
+        }
+        return upCategories;
+    }
+
+    private Predicate<CategoryDto> relevantPredicate(Boolean showRelevantCategory) {
+        return item -> {
+            if (Objects.isNull(showRelevantCategory))
+                return true;
+            return !showRelevantCategory || showRelevantCategory.equals(item.getRelevant());
+        };
+    }
+
+
     public List<CategoryDto> getCategory(Long accountId, String name) {
         accountService.checkAccessToAccount(accountId);
         return categoryRepository.findByAccountIdAndNameAndStuffFlagFalseAndFlagActivityTrue(accountId, name).stream()
@@ -67,6 +98,17 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    public Category getOneCategoryByName(Long accountId, String name) {
+        accountService.checkAccessToAccount(accountId);
+        var categories = categoryRepository.findByAccountIdAndNameAndFlagActivityTrue(accountId, name);
+        if (CollectionUtils.isEmpty(categories))
+            return null;
+        if (categories.size() > 1)
+            throw new ProcessException("Найдено больше одной категории");
+        return categories.getFirst();
+    }
+
+    @Transactional
     public Long saveCategory(CategoryDto request) {
         log.info("сохранение категории");
         Category category = new Category();
@@ -77,7 +119,10 @@ public class CategoryService {
             accountService.checkAccessToAccount(category.getAccountId());
             if (!category.getFlagActivity())
                 throw new ProcessException("Категория \"" + category.getName() + "\" уже удалена");
-        } else category.setFlagActivity(Boolean.TRUE);
+        } else {
+            category.setFlagActivity(Boolean.TRUE);
+            category.setRelevant(Boolean.TRUE);
+        }
 
         category.setName(request.getName());
         category.setAccountId(request.getAccountId());
@@ -86,6 +131,8 @@ public class CategoryService {
                 ? request.getStuffFlag()
                 : Boolean.FALSE);
         category.setName(request.getName());
+        if (Objects.nonNull(request.getRelevant()))
+            category.setRelevant(request.getRelevant());
         var response = categoryRepository.save(category);
 
         return response.getId();
@@ -110,7 +157,7 @@ public class CategoryService {
         var foundActivityOperationIds = operationRepository.findActivityOperationIdsByCategoryId(categoryId);
         log.info("по категории [{}] найдено активных товаров [{}]", categoryId, foundActivityOperationIds.size());
 
-        if (isNull(reserveCategoryId) && foundActivityOperationIds.size() > 0)
+        if (isNull(reserveCategoryId) && !foundActivityOperationIds.isEmpty())
             throw new ProcessException("Невозможно удалить категорию, т.к. на ней записаны операции, а резервной категории не указано");
 
         if (nonNull(reserveCategoryId)) {

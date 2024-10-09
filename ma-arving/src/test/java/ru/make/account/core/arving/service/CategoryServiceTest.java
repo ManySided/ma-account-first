@@ -54,11 +54,13 @@ public class CategoryServiceTest extends AbstractTestBase {
         assertEquals(2, categoryTreeByAccountId.get(0).getSubCategories().size());
         assertTrue(categoryTreeByAccountId.get(0).getSubCategories().stream().anyMatch(item -> item.getName().equals("Пироги")));
         assertTrue(categoryTreeByAccountId.get(0).getSubCategories().stream().anyMatch(item -> item.getName().equals("Мороженное")));
+        assertTrue(categoryTreeByAccountId.get(0).getRelevant());
 
         // переименуем категорию
         categoryService.saveCategory(CategoryDto.builder()
                 .id(parent)
                 .name("Сладкое")
+                .relevant(Boolean.FALSE)
                 .accountId(accountId)
                 .build());
 
@@ -68,6 +70,7 @@ public class CategoryServiceTest extends AbstractTestBase {
         assertEquals("Сладкое", categoryTreeByAccountId.get(0).getName());
         assertEquals(Boolean.FALSE, categoryTreeByAccountId.get(0).getStuffFlag());
         assertEquals(2, categoryTreeByAccountId.get(0).getSubCategories().size());
+        assertFalse(categoryTreeByAccountId.get(0).getRelevant());
     }
 
     @Test

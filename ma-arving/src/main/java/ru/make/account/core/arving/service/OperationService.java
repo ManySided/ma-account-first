@@ -11,6 +11,7 @@ import ru.make.account.core.arving.web.dto.operation.OperationDto;
 import ru.make.account.core.arving.web.mapper.OperationMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.make.account.core.arving.util.SearchUtils.likeText;
@@ -29,7 +30,7 @@ public class OperationService {
     public Long saveOperation(OperationDto request) {
         log.info("создание операции");
         var operationEntity = operationMapper.toEntity(request);
-        operationEntity.setStuffFlag(Boolean.FALSE);
+        operationEntity.setStuffFlag(Optional.of(request).map(OperationDto::getStuffFlag).orElse(Boolean.FALSE));
         operationEntity.setIsActive(Boolean.TRUE);
 
         operationEntity = operationRepository.save(operationEntity);

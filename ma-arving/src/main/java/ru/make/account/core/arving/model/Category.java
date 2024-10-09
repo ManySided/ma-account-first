@@ -26,4 +26,6 @@ public class Category {
     private Boolean stuffFlag;
     @Column(name = "flag_activity")
     private Boolean flagActivity;
+    @Column(name = "relevant")
+    private Boolean relevant;
 }

@@ -17,8 +17,12 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/getTreeCategories")
-    public ResponseEntity<List<CategoryDto>> getTreeCategories(Long request) {
-        return ResponseEntity.ok(categoryService.getCategoryTreeByAccountId(request));
+    public ResponseEntity<List<CategoryDto>> getTreeCategories(
+            @RequestParam Long accountId,
+            @RequestParam(required = false) Boolean showRelevantCategory) {
+        return ResponseEntity.ok(
+                categoryService.getCategoryTreeByAccountId(accountId, showRelevantCategory)
+        );
     }
 
     @GetMapping("/getCategories")

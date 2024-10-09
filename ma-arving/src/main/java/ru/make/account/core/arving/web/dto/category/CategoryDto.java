@@ -17,5 +17,6 @@ public class CategoryDto {
     private Long parent;
     private Long accountId;
     private Boolean stuffFlag;
+    private Boolean relevant;
     private List<CategoryDto> subCategories;
 }

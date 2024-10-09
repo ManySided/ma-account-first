@@ -1,7 +1,10 @@
 package ru.make.account.core.arving.model.debt;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
@@ -11,6 +14,9 @@ import lombok.Data;
         sequenceName = "debt_operation_id_seq",
         allocationSize = 1)
 @Table(name = "debt_moving", schema = "spatium")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class DebtOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "int_id_generator_debt_operation")

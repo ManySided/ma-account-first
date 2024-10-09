@@ -1,6 +1,6 @@
 package ru.make.account.core.arving.model;
 
 public enum TicketDirectionEnum {
-    EXPENDITURE,
-    INCOME
+    EXPENDITURE, // расход
+    INCOME // доход
 }
