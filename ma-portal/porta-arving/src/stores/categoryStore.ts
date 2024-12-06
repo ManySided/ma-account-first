@@ -7,14 +7,18 @@ import {handleError} from 'src/common/ErrorHandler';
 export const useCategoryStore = defineStore('category', {
   state: () => ({
     treeCategory: [] as Category[],
+    treeCategoryRelevant: [] as Category[],
     categoriesMap: new Map<number, Category>(),
     arrayCategory: [] as Category[],
-    currentCategory: {} as Category,
+    currentCategory: {} as Category
   }),
 
   getters: {
     getTreeCategory(state) {
       return state.treeCategory;
+    },
+    getTreeCategoryRelevant(state) {
+      return state.treeCategoryRelevant;
     },
     getCategoryMap(state) {
       return state.categoriesMap;
@@ -31,9 +35,22 @@ export const useCategoryStore = defineStore('category', {
   actions: {
     loadTreeCategory(accountId: number) {
       api.get('/api/service/category/getTreeCategories',
-        {params: {request: accountId}})
+        {params: {accountId: accountId}})
         .then((response) => {
           this.treeCategory = response.data
+        })
+        .catch(handleError)
+    },
+    actionLoadTreeCategoryRelevant(accountId: number, relevant: boolean) {
+      api.get('/api/service/category/getTreeCategories',
+        {
+          params: {
+            accountId: accountId,
+            showRelevantCategory: relevant
+          }
+        })
+        .then((response) => {
+          this.treeCategoryRelevant = response.data
         })
         .catch(handleError)
     },

@@ -211,9 +211,13 @@ public class DebtService {
         accountService.checkAccessToAccount(debtEntity.getAccountId());
 
         debtEntity.setIsActive(Boolean.FALSE);
-        debtEntity.setCloseDate(debt.getCloseDate());
+        LocalDate closeDate;
+        if (Objects.isNull(debt.getCloseDate()))
+            closeDate = LocalDate.now();
+        else closeDate = debt.getCloseDate();
+        debtEntity.setCloseDate(closeDate);
         debtRepository.save(debtEntity);
-        log.info("> долг [{}] закрыт датой [{}]", debt.getId(), debt.getCloseDate());
+        log.info("> долг [{}] закрыт датой [{}]", debt.getId(), closeDate);
     }
 
     public List<DebtDto> getActiveDebts(Long accountId) {
@@ -238,7 +242,10 @@ public class DebtService {
 
     private DebtOperationDto mapDebtOperationDto(DebtOperation debtOperation) {
         var debtOperationDto = debtMapper.toDto(debtOperation);
-        debtOperationDto.setTicket(ticketService.getTicket(debtOperation.getTicketId()));
+        TicketDto ticket = ticketService.getTicket(debtOperation.getTicketId());
+        var operation = ticket.getOperations().getFirst();
+        debtOperationDto.setTicket(ticket);
+        debtOperationDto.setSumOperation(operation.getSum());
         return debtOperationDto;
     }
 
