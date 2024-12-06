@@ -4,7 +4,8 @@
       <div class="row">
         <div class="col-12" style="padding-left: 5px">
           <!-- ввод данных чека -->
-          <q-card flat bordered>
+          <q-card flat bordered
+                  :style="{ background: thisTicket.ticketDirection==='EXPENDITURE'?'#fbfcfe':'#eef7f0'}">
             <q-card-section class="q-pt-xs">
               <!-- Секция чека -->
               <q-btn flat color="primary" @click="leavePage">

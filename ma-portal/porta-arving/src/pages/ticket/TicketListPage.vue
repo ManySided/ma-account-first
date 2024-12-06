@@ -73,7 +73,9 @@
                                     :title="formattedNumber(itemDay.sumOfDay)">
                     <div v-for="(itemTicket, indexTicket) in itemDay.tickets"
                          :key="indexTicket" style="padding-bottom: 20px">
-                      <q-card class="my-card" flat bordered>
+                      <q-card class="my-card"
+                              flat bordered
+                              :style="{ background: itemTicket.ticketDirection==='EXPENDITURE'?'#fbfcfe':'#eef7f0'}">
                         <!-- Заголовок чека -->
                         <div style="padding-left: 20px; padding-top: 5px">
                           <div class="text q-mb-sm" v-if="itemTicket.ticketDirection==='EXPENDITURE'">

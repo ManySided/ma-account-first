@@ -7,7 +7,7 @@
             <q-menu>
               <q-list dense style="min-width: 100px">
                 <q-item clickable v-close-popup>
-                  <q-item-section @click="$router.push({name: 'account'})">Счета</q-item-section>
+                  <q-item-section @click="$router.push({name: 'account'})">Текущий счёт</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
                   <q-item-section @click="$router.push({name: 'category'})">Категории</q-item-section>
@@ -16,7 +16,7 @@
                   <q-item-section @click="$router.push({name: 'tickets'})">Операции</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup>
-                  <q-item-section>Долги</q-item-section>
+                  <q-item-section @click="$router.push({name: 'debts'})">Долги</q-item-section>
                 </q-item>
                 <q-separator></q-separator>
                 <q-item clickable v-close-popup>

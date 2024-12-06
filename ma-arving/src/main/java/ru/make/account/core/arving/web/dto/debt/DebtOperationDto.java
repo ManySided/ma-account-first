@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class DebtOperationDto {
     private TicketDto ticket;
     private Long debtId;
     private Boolean deleteFlag;
+    private BigDecimal sumOperation;
 }

@@ -64,14 +64,13 @@
 
 <script setup lang="ts">
 import {computed, ref} from 'vue';
-import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import CategoryTreeModal from 'components/utils/CategoryTreeModal.vue';
 import {useOperationStore} from 'stores/operationStore';
 import {Operation} from 'src/model/dto/TicketDto';
 
 defineOptions({
   name: 'OperationEditRow',
-  components: {CustomFieldDate, CategoryTreeModal},
+  components: {CategoryTreeModal},
 });
 const props = defineProps(['accountId']);
 const operationVariable = defineModel<Operation>('operationVariable', {

@@ -25,18 +25,32 @@ const routes: RouteRecordRaw[] = [
         path: 'category',
         name: 'category',
         component: () => import('pages/category/CategoryPage.vue'),
-
       },
       {
         path: 'tickets',
         name: 'tickets',
         component: () => import('pages/ticket/TicketListPage.vue'),
-
       },
       {
         path: 'ticket/edit',
         name: 'ticketEdit',
         component: () => import('pages/ticket/TicketEditPage.vue'),
+      },
+      {
+        path: 'debts',
+        name: 'debts',
+        component: () => import('pages/debt/DebtListPage.vue'),
+      },
+      {
+        path: 'debt/:debtId',
+        name: 'debtEdit',
+        component: () => import('pages/debt/DebtEditPage.vue'),
+        props: true
+      },
+      {
+        path: 'debt',
+        name: 'debtView',
+        component: () => import('pages/debt/DebtEditPage.vue')
       },
       {
         path: 'import/csv',

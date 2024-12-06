@@ -50,6 +50,7 @@
                   <q-icon name="close" @click="clearParentCategoryMethod"/>
                 </template>
               </q-select>
+              <q-checkbox v-model="currentCategory.relevant" label="релевантная категория"/>
             </q-card-section>
             <q-separator dark/>
 
@@ -131,11 +132,6 @@ export default defineComponent({
 
     storeStuff.actionUpdateTitlePage('Категории');
     updateCategoryListMethod()
-
-    if (storeStuff.getAccountId) {
-      storeCategory.loadTreeCategory(storeStuff.getAccountId);
-      storeCategory.loadCategories(storeStuff.getAccountId);
-    }
 
     // variable
     const selected = ref(null)

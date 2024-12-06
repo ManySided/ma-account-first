@@ -14,6 +14,7 @@ export interface Category {
   subCategories?: Category[]
   parent?: number
   accountId?: number
+  relevant?: boolean
 }
 
 export interface Operation {
@@ -72,6 +73,7 @@ export const isValidTicket = (t: Ticket) => {
 export function getClearCategory(): Category {
   return {
     name: '',
-    parent: undefined
+    parent: undefined,
+    relevant: false
   } as Category
 }

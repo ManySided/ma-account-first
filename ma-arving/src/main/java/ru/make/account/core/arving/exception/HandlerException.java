@@ -31,7 +31,7 @@ public class HandlerException /*extends ResponseEntityExceptionHandler*/ {
 
     @ExceptionHandler({ProcessException.class})
     public ResponseEntity<?> handleProcessException(ProcessException exception) {
-        log.error("Ошибка выполнения: {}", exception.getClass().getName());
+        log.error("Ошибка выполнения: {}. {}", exception.getClass().getName(), exception.getMessage());
         return new ResponseEntity<>(
                 Map.of("timestamp", LocalDateTime.now(),
                         "error", exception.getMessage()),
