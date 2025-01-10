@@ -15,7 +15,9 @@ import ru.make.account.core.arving.model.TicketDirectionEnum;
 import ru.make.account.core.arving.model.Ticket_;
 import ru.make.account.core.arving.repository.TicketRepository;
 import ru.make.account.core.arving.security.SecurityHandler;
+import ru.make.account.core.arving.util.CollUtils;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
+import ru.make.account.core.arving.web.dto.operation.OperationTagDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketFilterDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketListResponseDto;
@@ -40,6 +42,7 @@ public class TicketService {
 
     private final OperationService operationService;
     private final AccountService accountService;
+    private final OperationTagService operationTagService;
 
     private final SecurityHandler securityHandler;
 
@@ -54,6 +57,7 @@ public class TicketService {
 
         var ticketSum = BigDecimal.ZERO;
         var operations = request.getOperations();
+        tagProcessing(CollUtils.collectAll(operations, OperationDto::getTags), ticket.getAccountId());
         log.info("создание операций в количестве [{}]", operations.size());
         for (OperationDto operation : operations) {
             ticketSum = ticketSum.add(operation.getSum());
@@ -304,6 +308,35 @@ public class TicketService {
 
     private void checkAccess(TicketDto ticket) {
         checkAccess(ticket.getAccountId());
+    }
+
+    /**
+     * Обработка тегов
+     */
+    private void tagProcessing(List<OperationTagDto> tagList, Long accountId) {
+        if (CollectionUtils.isEmpty(tagList))
+            return;
+        // подготовка тегов операций
+        var tagMap = tagList.stream()
+                .collect(Collectors.groupingBy(OperationTagDto::getName));
+        tagMap.forEach((tagName, tags) -> {
+            // смотрим в группе есть хотя бы один уже с ID, если есть, то ставим всем ID
+            tags.stream()
+                    .filter(t -> Objects.nonNull(t.getId()))
+                    .findFirst()
+                    .ifPresent(t -> tags.forEach(tag -> tag.setId(t.getId())));
+
+            // смотрим есть ли с пустыми ID
+            var hasNotSafeTags = tags.stream()
+                    .map(OperationTagDto::getId)
+                    .anyMatch(Objects::isNull);
+            if (hasNotSafeTags) {
+                var rqTag = tags.get(0);
+                rqTag.setAccountId(accountId);
+                var rsTag = operationTagService.saveTag(rqTag);
+                tags.forEach(tag -> tag.setId(rsTag.getId()));
+            }
+        });
     }
 
     private TicketDto toDto(Ticket ticket) {
