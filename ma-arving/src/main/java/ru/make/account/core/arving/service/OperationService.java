@@ -2,6 +2,7 @@ package ru.make.account.core.arving.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.make.account.core.arving.exception.ProcessException;
@@ -25,11 +26,20 @@ public class OperationService {
     private final OperationRepository operationRepository;
 
     private final CategoryService categoryService;
+    private final OperationTagService operationTagService;
 
     @Transactional
     public Long saveOperation(OperationDto request) {
         log.info("создание операции");
+        if (CollectionUtils.isNotEmpty(request.getTags())) {
+            request.setTags(
+                    request.getTags().stream()
+                            .map(operationTagService::saveTag)
+                            .collect(Collectors.toList())
+            );
+        }
         var operationEntity = operationMapper.toEntity(request);
+
         operationEntity.setStuffFlag(Optional.of(request).map(OperationDto::getStuffFlag).orElse(Boolean.FALSE));
         operationEntity.setIsActive(Boolean.TRUE);
 

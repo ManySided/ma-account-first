@@ -9,11 +9,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.make.account.core.arving.model.TicketDirectionEnum;
 import ru.make.account.core.arving.web.dto.category.CategoryDto;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
+import ru.make.account.core.arving.web.dto.operation.OperationTagDto;
 import ru.make.account.core.arving.web.dto.ticket.TicketDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -38,6 +41,12 @@ public class TicketServiceTest extends AbstractTestBase {
                         .id(getCategoryProductsId())
                         .build())
                 .comment("купил хлеб")
+                .tags(List.of(OperationTagDto.builder()
+                                .name("продукты")
+                                .build(),
+                        OperationTagDto.builder()
+                                .name("мучное")
+                                .build()))
                 .build();
         var operation2 = OperationDto.builder()
                 .name("автобус")
@@ -295,5 +304,9 @@ public class TicketServiceTest extends AbstractTestBase {
         assertThat(request.getSum()).isEqualByComparingTo(actual.getSum());
         assertEquals(Boolean.TRUE, actual.getIsActive());
         assertEquals(Boolean.FALSE, actual.getStuffFlag());
+
+        var actualTags = Optional.ofNullable(actual.getTags()).orElse(new ArrayList<>());
+        var requestTags = Optional.ofNullable(request.getTags()).orElse(new ArrayList<>());
+        assertEquals(requestTags.size(), actualTags.size());
     }
 }

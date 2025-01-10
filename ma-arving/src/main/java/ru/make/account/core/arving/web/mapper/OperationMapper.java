@@ -5,7 +5,11 @@ import org.mapstruct.Mapping;
 import ru.make.account.core.arving.model.Operation;
 import ru.make.account.core.arving.web.dto.operation.OperationDto;
 
-@Mapper
+@Mapper(
+        uses = {
+                OperationTagMapper.class
+        }
+)
 public interface OperationMapper {
     @Mapping(target = "categoryId", source = "category.id")
     Operation toEntity(OperationDto dto);

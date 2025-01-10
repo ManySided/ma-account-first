@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ru.make.account.core.arving.web.dto.category.CategoryDto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -27,4 +28,5 @@ public class OperationDto {
     private Boolean isActive;
     private Boolean stuffFlag;
     private Boolean importFlag;
+    private List<OperationTagDto> tags;
 }
