@@ -25,6 +25,14 @@ export interface Operation {
   category?: Category
   purchaseId?: number
   isActive: boolean
+  tags?: OperationTag[]
+}
+
+export interface OperationTag {
+  id?: number
+  name: string
+  color?: string
+  sign?: string
 }
 
 export interface TicketsOfDay {

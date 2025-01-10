@@ -105,6 +105,7 @@ import Ticket, {isValidTicket, ticketDirection} from 'src/model/dto/TicketDto';
 import {useTicketStore} from 'stores/ticketStore';
 import {useRouter} from 'vue-router';
 import {useStuffStore} from 'stores/stuffStore';
+import {useTagStore} from 'stores/tagsStore';
 
 export default defineComponent({
   name: 'TicketEditPage',
@@ -113,8 +114,10 @@ export default defineComponent({
     // store
     const storeTicket = useTicketStore();
     const storeStuff = useStuffStore();
+    const storeTags = useTagStore();
     // init
     storeStuff.actionUpdateTitlePage('Создание чека');
+    storeTags.actionLoadTags(storeStuff.getAccountId)
     const router = useRouter();
     const ticketOptions = ref(ticketDirection)
     const thisTicket = ref({

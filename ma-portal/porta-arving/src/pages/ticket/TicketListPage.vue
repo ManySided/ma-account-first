@@ -119,6 +119,15 @@
                               <q-item-label caption v-if="itemOperation.comment">
                                 {{ itemOperation.comment }}
                               </q-item-label>
+                              <q-item-label caption>
+                                <q-chip
+                                  size="sm"
+                                  color="primary"
+                                  text-color="white"
+                                  v-for="(itemTag, indexTag) in itemOperation.tags" :key="indexTag">
+                                  {{ itemTag.name }}
+                                </q-chip>
+                              </q-item-label>
                             </q-item-section>
                             <q-item-section>
                               <div class="column items-center self-start">
@@ -279,7 +288,8 @@ export default defineComponent({
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const refreshTotalSumMethod = () => {}
+    const refreshTotalSumMethod = () => {
+    }
     const viewEditOperationMethod = (operation: Operation) => {
       currentOperation.value = operation;
       editOperationView.value = true;

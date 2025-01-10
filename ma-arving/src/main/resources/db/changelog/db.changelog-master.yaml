@@ -47,3 +47,9 @@ databaseChangeLog:
   - include:
       file: db.changelog-16-category-update-relevant.sql
       relativeToChangelogFile: true
+  - include:
+      file: db.changelog-17-operation_tag.sql
+      relativeToChangelogFile: true
+  - include:
+      file: db.changelog-18-alter_operation_tag.sql
+      relativeToChangelogFile: true

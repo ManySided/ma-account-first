@@ -58,6 +58,8 @@ public class TicketService {
         for (OperationDto operation : operations) {
             ticketSum = ticketSum.add(operation.getSum());
             operation.setTicketId(ticket.getId());
+            if (CollectionUtils.isNotEmpty(operation.getTags()))
+                operation.getTags().forEach(tag -> tag.setAccountId(request.getAccountId()));
             operationService.saveOperation(operation);
         }
 

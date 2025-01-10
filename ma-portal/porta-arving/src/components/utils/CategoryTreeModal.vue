@@ -69,7 +69,8 @@ const showSelectCategory = ref(false)
 
 const categoryStore = useCategoryStore();
 if (props.accountId) {
-  categoryStore.actionLoadTreeCategoryRelevant(props.accountId, showSelectCategory.value);
+  console.log()
+  categoryStore.actionLoadTreeCategoryRelevant(props.accountId, useRelevantCategory.value);
   categoryStore.loadCategories(props.accountId);
 }
 

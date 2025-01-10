@@ -43,6 +43,43 @@
     </div>
     <div class="col-1"></div>
   </div>
+  <!-- Теги операции -->
+  <div class="row" v-if="!operationVariable.id">
+    <q-btn flat color="primary" label="добавить тег" size="sm">
+      <q-popup-proxy>
+        <div class="q-pa-md" style="max-width: 350px">
+          <q-list>
+            <q-item>
+              <q-item-section>
+                <q-input v-model="tagName" label="Название тега" @keydown.enter.prevent="addTag(operationVariable)"/>
+              </q-item-section>
+              <q-item-section avatar>
+                <q-icon color="primary" name="add" @click="addTag(operationVariable)"/>
+              </q-item-section>
+            </q-item>
+            <div v-for="(itemGlobalTag, indexGlobalTag) in tagStore.getTags" :key="indexGlobalTag">
+              <q-item
+                clickable
+                @click="addTagByItem(operationVariable, itemGlobalTag)"
+                v-if="isLikeTag(itemGlobalTag)">
+                <q-item-section>#{{ itemGlobalTag.name }}</q-item-section>
+              </q-item>
+            </div>
+          </q-list>
+        </div>
+      </q-popup-proxy>
+    </q-btn>
+    <div v-for="(itemTag, indexTag) in operationVariable.tags" :key="indexTag">
+      <q-chip dense
+              clickable
+              color="primary"
+              text-color="white"
+              icon-right="close"
+              @click="removeTag(operationVariable, itemTag)">
+        {{ itemTag.name }}
+      </q-chip>
+    </div>
+  </div>
   <div class="row" v-if="showPurchaseEdit">
     <p align="center"><i>тут будет редактирование товара</i></p>
   </div>
@@ -66,7 +103,8 @@
 import {computed, ref} from 'vue';
 import CategoryTreeModal from 'components/utils/CategoryTreeModal.vue';
 import {useOperationStore} from 'stores/operationStore';
-import {Operation} from 'src/model/dto/TicketDto';
+import {Operation, OperationTag} from 'src/model/dto/TicketDto';
+import {useTagStore} from 'stores/tagsStore';
 
 defineOptions({
   name: 'OperationEditRow',
@@ -82,11 +120,13 @@ const operationVariable = defineModel<Operation>('operationVariable', {
 
 // store
 const operationStore = useOperationStore();
+const tagStore = useTagStore();
 
 // variables
 const showComment = ref(false);
 const showPurchaseEdit = ref(false);
 const showSearchLikedGroups = ref(false);
+const tagName = ref('')
 
 // methods
 const changeShowComment = () => {
@@ -104,6 +144,34 @@ const getOperationByName = (selectedName: string) => {
 const searchAndShowVariants = () => {
   operationStore.actionFindLikedGroups(operationVariable.value.name, props.accountId);
   showSearchLikedGroups.value = true;
+}
+const addTag = (operation: Operation) => {
+  const tag: OperationTag = {
+    name: tagName.value
+  };
+  if (operation.tags)
+    operation.tags.push(tag)
+  else {
+    operation.tags = []
+    operation.tags.push(tag)
+  }
+  tagName.value = ''
+}
+const addTagByItem = (operation: Operation, tag: OperationTag) => {
+  if (!operation.tags)
+    operation.tags = []
+
+  operation.tags.push(tag)
+  tagName.value = ''
+}
+const removeTag = (operation: Operation, tag: OperationTag) => {
+  const tagIndex = operation.tags?.indexOf(tag, 0)
+  if (tagIndex || tagIndex === 0) {
+    operation.tags?.splice(tagIndex, 1)
+  }
+}
+const isLikeTag = (tag: OperationTag) => {
+  return tag.name.includes(tagName.value)
 }
 // validate
 const isValidName = computed(() => {

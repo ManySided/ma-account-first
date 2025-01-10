@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -45,4 +47,13 @@ public class Operation {
 
     @Column(name = "import_flag")
     private Boolean importFlag;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "operation_to_tag",
+            schema = "spatium",
+            joinColumns = {@JoinColumn(name = "operation_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")}
+    )
+    private Set<OperationTag> tags = new HashSet<>();
 }
