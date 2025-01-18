@@ -47,6 +47,7 @@ export const useOperationStore = defineStore('operation', {
           console.log(response.data)
           operation.name = response.data.name
           operation.category = response.data.category
+          operation.tags = response.data.tags
         })
         .catch(handleError)
     }
