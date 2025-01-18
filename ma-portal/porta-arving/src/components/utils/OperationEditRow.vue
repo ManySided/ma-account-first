@@ -57,6 +57,18 @@
                 <q-icon color="primary" name="add" @click="addTag(operationVariable)"/>
               </q-item-section>
             </q-item>
+            <!-- Временный список тегов. Созданные во время занесения данных -->
+            <div v-if="tagStore.getHasTempTag">
+              <div v-for="(itemGlobalTag, indexGlobalTag) in tagStore.getTempTags" :key="indexGlobalTag">
+                <q-item
+                  clickable
+                  @click="addTagByItem(operationVariable, itemGlobalTag)"
+                  v-if="isLikeTag(itemGlobalTag)">
+                  <q-item-section>#{{ itemGlobalTag.name }}</q-item-section>
+                </q-item>
+              </div>
+              <q-separator/>
+            </div>
             <div v-for="(itemGlobalTag, indexGlobalTag) in tagStore.getTags" :key="indexGlobalTag">
               <q-item
                 clickable
@@ -156,6 +168,7 @@ const addTag = (operation: Operation) => {
     operation.tags.push(tag)
   }
   tagName.value = ''
+  addTempTag(tag)
 }
 const addTagByItem = (operation: Operation, tag: OperationTag) => {
   if (!operation.tags)
@@ -163,6 +176,14 @@ const addTagByItem = (operation: Operation, tag: OperationTag) => {
 
   operation.tags.push(tag)
   tagName.value = ''
+  addTempTag(tag)
+}
+const addTempTag = (tag: OperationTag) => {
+  console.log('проверим id тега')
+  if (!tag.id) {
+    console.log('добавили временный тег')
+    tagStore.actionAddTempTag(tag)
+  }
 }
 const removeTag = (operation: Operation, tag: OperationTag) => {
   const tagIndex = operation.tags?.indexOf(tag, 0)
