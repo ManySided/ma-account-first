@@ -125,6 +125,7 @@ public class TicketService {
         operation.setPurchaseId(request.getPurchaseId());
         operation.setTicketId(request.getTicketId());
         operation.setIsActive(Boolean.TRUE);
+        operation.setTags(request.getTags());
         var createdOperationId = operationService.saveOperation(operation);
         log.info("добавление суммы по новой операции операции [{}]", createdOperationId);
         changeCurrentSum(ticket.getAccountId(),
@@ -331,7 +332,7 @@ public class TicketService {
                     .map(OperationTagDto::getId)
                     .anyMatch(Objects::isNull);
             if (hasNotSafeTags) {
-                var rqTag = tags.get(0);
+                var rqTag = tags.getFirst();
                 rqTag.setAccountId(accountId);
                 var rsTag = operationTagService.saveTag(rqTag);
                 tags.forEach(tag -> tag.setId(rsTag.getId()));
