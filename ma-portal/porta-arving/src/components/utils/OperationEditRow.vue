@@ -44,7 +44,7 @@
     <div class="col-1"></div>
   </div>
   <!-- Теги операции -->
-  <div class="row" v-if="!operationVariable.id">
+  <div class="row">
     <q-btn flat color="primary" label="добавить тег" size="sm">
       <q-popup-proxy>
         <div class="q-pa-md" style="max-width: 350px">
@@ -179,9 +179,7 @@ const addTagByItem = (operation: Operation, tag: OperationTag) => {
   addTempTag(tag)
 }
 const addTempTag = (tag: OperationTag) => {
-  console.log('проверим id тега')
   if (!tag.id) {
-    console.log('добавили временный тег')
     tagStore.actionAddTempTag(tag)
   }
 }

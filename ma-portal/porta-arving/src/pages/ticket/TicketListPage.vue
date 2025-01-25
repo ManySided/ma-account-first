@@ -223,6 +223,7 @@ import {defineComponent, ref} from 'vue';
 import {useAccountStore} from 'stores/accountStore';
 import {useTicketStore} from 'stores/ticketStore';
 import {useStuffStore} from 'stores/stuffStore';
+import {useTagStore} from 'stores/tagsStore';
 import CustomFieldDate from 'components/utils/CustomFieldDate.vue';
 import OperationEditRow from 'components/utils/OperationEditRow.vue';
 import {isValidOperation, Operation, TicketList} from 'src/model/dto/TicketDto';
@@ -240,6 +241,7 @@ export default defineComponent({
     const storeStuff = useStuffStore();
     const storeAccount = useAccountStore();
     const storeTicket = useTicketStore();
+    const storeTags = useTagStore();
 
     const startDate = (date.formatDate(storeStuff.getTicketsFilterPeriodFrom, 'YYYY-MM-DD'));
     const endDate = (date.formatDate(storeStuff.getTicketsFilterPeriodTo, 'YYYY-MM-DD'));
@@ -291,6 +293,7 @@ export default defineComponent({
     const refreshTotalSumMethod = () => {
     }
     const viewEditOperationMethod = (operation: Operation) => {
+      storeTags.actionLoadTags(storeStuff.getAccountId)
       currentOperation.value = operation;
       editOperationView.value = true;
     }
