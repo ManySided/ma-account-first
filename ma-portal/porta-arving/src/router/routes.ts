@@ -56,6 +56,11 @@ const routes: RouteRecordRaw[] = [
         path: 'import/csv',
         name: 'importCsv',
         component: () => import('pages/upload/ImportCsvPage.vue'),
+      },
+      {
+        path: 'report/categoryTag',
+        name: 'reportCategoryTag',
+        component: () => import('pages/report/ReportCategoryTagPage.vue'),
       }
     ]
   },

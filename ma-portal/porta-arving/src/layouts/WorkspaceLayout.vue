@@ -18,7 +18,22 @@
                 <q-item clickable v-close-popup>
                   <q-item-section @click="$router.push({name: 'debts'})">Долги</q-item-section>
                 </q-item>
-                <q-separator></q-separator>
+                <q-separator/>
+                <q-item clickable>
+                  <q-item-section>Отчёт</q-item-section>
+                  <q-item-section side>
+                    <q-icon name="keyboard_arrow_right"/>
+                  </q-item-section>
+                  <q-menu anchor="top end" self="top start">
+                    <q-list>
+                      <q-item clickable v-close-popup>
+                        <q-item-section @click="$router.push({name: 'reportCategoryTag'})">Отчёт "Категория-тег"
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-item>
+                <q-separator/>
                 <q-item clickable v-close-popup>
                   <q-item-section @click="$router.push({name: 'importCsv'})">Импорт</q-item-section>
                 </q-item>
