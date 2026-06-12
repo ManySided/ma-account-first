@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import ru.make.account.core.arving.exception.ProcessException;
 import ru.make.account.core.arving.repository.OperationTagRepository;
 import ru.make.account.core.arving.web.dto.operation.OperationTagDto;
 import ru.make.account.core.arving.web.mapper.OperationTagMapper;
@@ -43,6 +44,21 @@ public class OperationTagService {
         return repository.findAllByAccountId(accountId).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public OperationTagDto getTagById(Long tagId) {
+        log.info("получение тега по ID {}", tagId);
+
+        return repository.findById(tagId)
+                .map(mapper::toDto)
+                .orElseThrow(() -> new ProcessException("Тег не найден"));
+    }
+
+    public OperationTagDto getTagByName(Long accountId, String tagName) {
+        var result = repository.findAllByNameAndAccountId(tagName, accountId);
+        if (CollectionUtils.isEmpty(result))
+            return null;
+        return mapper.toDto(result.get(0));
     }
 
     private void checkAccess(Long accountId) {
